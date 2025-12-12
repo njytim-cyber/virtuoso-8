@@ -1,0 +1,43 @@
+{
+    "name": "virtuoso-8",
+    "version": "0.1.0",
+    "type": "module",
+    "description": "Grade 8 Violin Scale Trainer",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "test:e2e": "playwright test",
+        "lint": "eslint .",
+        "docs": "node scripts/auto-doc.js",
+        "prepare": "husky"
+    },
+    "dependencies": {
+        "lucide-react": "^0.460.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.40.0",
+        "@testing-library/jest-dom": "^6.1.5",
+        "@testing-library/react": "^14.1.0",
+        "@testing-library/user-event": "^14.6.1",
+        "@vitejs/plugin-react": "^4.2.0",
+        "eslint": "^8.55.0",
+        "eslint-plugin-react": "^7.33.2",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "husky": "^9.0.0",
+        "jsdom": "^23.0.0",
+        "lint-staged": "^15.2.0",
+        "sharp": "^0.33.1",
+        "vite": "^5.0.0",
+        "vitest": "^1.0.0"
+    },
+    "lint-staged": {
+        "*.{js,jsx}": [
+            "eslint --fix"
+        ]
+    }
+}
