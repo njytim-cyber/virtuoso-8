@@ -29,8 +29,9 @@ export default function MetronomeContainer({ tempo, timeSig, isPlaying, onComple
             else if (timeSig === '4/4') beats = 4;
 
             const secondsPerBeat = 60.0 / tempo;
-            currentBeat.current = 0;
+            currentBeat.current = 1; // Start at beat 1
             nextBeatTime.current = audioContext.current.currentTime;
+            onBeatChange(1); // Initialize UI to beat 1
 
             const playClick = (time, beat) => {
                 if (!audioContext.current) return;
@@ -57,8 +58,6 @@ export default function MetronomeContainer({ tempo, timeSig, isPlaying, onComple
                 const scheduleAheadTime = 0.1; // 100ms ahead
 
                 while (nextBeatTime.current < audioContext.current.currentTime + scheduleAheadTime) {
-                    currentBeat.current++;
-
                     if (currentBeat.current > beats) {
                         onComplete();
                         return;
@@ -67,11 +66,13 @@ export default function MetronomeContainer({ tempo, timeSig, isPlaying, onComple
                     playClick(nextBeatTime.current, currentBeat.current);
 
                     // Update UI on the main thread
+                    const beatToShow = currentBeat.current;
                     setTimeout(() => {
-                        onBeatChange(currentBeat.current);
+                        onBeatChange(beatToShow);
                     }, (nextBeatTime.current - audioContext.current.currentTime) * 1000);
 
                     nextBeatTime.current += secondsPerBeat;
+                    currentBeat.current++; // Increment after using
                 }
 
                 schedulerTimer.current = setTimeout(scheduler, 25); // Check every 25ms
