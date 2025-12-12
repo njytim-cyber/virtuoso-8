@@ -54,7 +54,7 @@ export default function DashboardView({ userData, history, onStart, onReview, on
                 <div className="max-w-2xl mx-auto flex justify-between items-center">
                     <div className="flex items-center space-x-3">
                         {/* User Avatar */}
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 border-2 border-gray-800">
                             <img src="/avatar.png" alt="User avatar" className="w-full h-full object-cover" />
                         </div>
 
