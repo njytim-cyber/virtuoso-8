@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * Visual metronome beat indicators
  * 
@@ -5,7 +7,7 @@
  * @param {number} props.count - Current beat number (1-based)
  * @param {string} props.timeSig - Time signature ('4/4', '6/8', '9/8')
  */
-export default function MetronomeView({ count, timeSig }) {
+const MetronomeView = ({ count, timeSig }) => {
     const Circle = ({ num }) => {
         const isActive = count === num;
 
@@ -36,4 +38,7 @@ export default function MetronomeView({ count, timeSig }) {
             )}
         </div>
     );
-}
+};
+
+// Memoize to prevent re-renders (only updates when count or timeSig changes)
+export default React.memo(MetronomeView);
