@@ -91,7 +91,10 @@ export default function DashboardView({ userData, history, onStart, onReview, on
             </header>
 
             <div className="max-w-2xl mx-auto px-4 space-y-6">
-                <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+                <button
+                    onClick={onReview}
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all cursor-pointer"
+                >
                     <div className="flex justify-between items-end mb-4">
                         <div>
                             <p className="text-indigo-100 font-medium">Syllabus Coverage</p>
@@ -108,18 +111,29 @@ export default function DashboardView({ userData, history, onStart, onReview, on
                     <div className="mt-2 text-sm text-indigo-100 flex justify-between">
                         <span>{completedIds.size} / {totalQuestions} items mastered</span>
                     </div>
-                </div>
+                </button>
 
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                     <button
-                        onClick={onReview}
+                        onClick={onStart}
                         className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all group text-left"
                     >
                         <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
-                            <BarChart2 className="text-indigo-600 group-hover:text-white" />
+                            <Play className="text-indigo-600 group-hover:text-white" fill="currentColor" />
                         </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Review Progress</h3>
-                        <p className="text-sm text-gray-500">Track your grades & history</p>
+                        <h3 className="font-bold text-gray-800 text-lg">Start Practicing</h3>
+                        <p className="text-sm text-gray-500">4 focused exercises</p>
+                    </button>
+
+                    <button
+                        onClick={onReview}
+                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-green-500 hover:shadow-md transition-all group text-left"
+                    >
+                        <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
+                            <BarChart2 className="text-green-600 group-hover:text-white" />
+                        </div>
+                        <h3 className="font-bold text-gray-800 text-lg">Review History</h3>
+                        <p className="text-sm text-gray-500">Track your progress</p>
                     </button>
                 </div>
 
