@@ -54,7 +54,7 @@ export default function DashboardView({ userData, history, onStart, onReview, on
                 <div className="max-w-2xl mx-auto flex justify-between items-center">
                     <div className="flex items-center space-x-3">
                         {/* User Avatar */}
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 border-2 border-gray-800">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 border border-gray-800">
                             <img src="/avatar.png" alt="User avatar" className="w-full h-full object-cover" />
                         </div>
 
@@ -110,29 +110,19 @@ export default function DashboardView({ userData, history, onStart, onReview, on
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <button
-                        onClick={onStart}
-                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all group text-left"
-                    >
-                        <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
-                            <Play className="text-indigo-600 group-hover:text-white" fill="currentColor" />
-                        </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Start Session</h3>
-                        <p className="text-sm text-gray-500">4 focused exercises</p>
-                    </button>
-
+                <div className="grid grid-cols-1 gap-4">
                     <button
                         onClick={onReview}
                         className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all group text-left"
                     >
-                        <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
-                            <BarChart2 className="text-green-600 group-hover:text-white" />
+                        <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
+                            <BarChart2 className="text-indigo-600 group-hover:text-white" />
                         </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Review</h3>
-                        <p className="text-sm text-gray-500">Track your grades</p>
+                        <h3 className="font-bold text-gray-800 text-lg">Review Progress</h3>
+                        <p className="text-sm text-gray-500">Track your grades & history</p>
                     </button>
                 </div>
+
             </div>
         </div>
     );
