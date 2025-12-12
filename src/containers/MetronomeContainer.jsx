@@ -1,94 +1,87 @@
-import { useEffect, useRef } from 'react';
-import { AUDIO_CONFIG } from '@config/audioConfig';
+import { useEffect, useState } from 'react';
 
 /**
- * Metronome Container - handles Web Audio API logic with precise timing
+ * Simple Metronome Container - cycles through beats 1-4
  * 
  * @param {Object} props
  * @param {number} props.tempo - BPM
- * @param {string} props.timeSig - Time signature
+ * @param {string} props.timeSig - Time signature ('4/4', '6/8', '9/8')
  * @param {boolean} props.isPlaying - Play state
  * @param {Function} props.onComplete - Callback when count-in completes
- * @param {Function} props.onBeatChange - Callback with current beat number
+ * @param {Function} props.onBeatChange - Callback with current beat number (1-4)
  */
 export default function MetronomeContainer({ tempo, timeSig, isPlaying, onComplete, onBeatChange }) {
-    const audioContext = useRef(null);
-    const nextBeatTime = useRef(0);
-    const currentBeat = useRef(0);
-    const schedulerTimer = useRef(null);
+    const [currentBeat, setCurrentBeat] = useState(1);
 
     useEffect(() => {
-        if (isPlaying) {
-            if (!audioContext.current) {
-                audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
-            let beats = 4;
-            if (timeSig === '9/8') beats = 3;
-            else if (timeSig === '6/8') beats = 6;
-            else if (timeSig === '4/4') beats = 4;
-
-            const secondsPerBeat = 60.0 / tempo;
-            currentBeat.current = 1; // Start at beat 1
-            nextBeatTime.current = audioContext.current.currentTime;
-            onBeatChange(1); // Initialize UI to beat 1
-
-            const playClick = (time, beat) => {
-                if (!audioContext.current) return;
-                const osc = audioContext.current.createOscillator();
-                const gain = audioContext.current.createGain();
-                osc.connect(gain);
-                gain.connect(audioContext.current.destination);
-
-                // High pitch for first beat, low for others
-                osc.frequency.value = beat === 1
-                    ? AUDIO_CONFIG.frequencies.firstBeat
-                    : AUDIO_CONFIG.frequencies.otherBeats;
-                gain.gain.exponentialRampToValueAtTime(
-                    0.00001,
-                    time + AUDIO_CONFIG.clickDuration
-                );
-
-                osc.start(time);
-                osc.stop(time + AUDIO_CONFIG.clickDuration);
-            };
-
-            const scheduler = () => {
-                // Schedule beats slightly ahead of time for smooth playback
-                const scheduleAheadTime = 0.1; // 100ms ahead
-
-                while (nextBeatTime.current < audioContext.current.currentTime + scheduleAheadTime) {
-                    if (currentBeat.current > beats) {
-                        onComplete();
-                        return;
-                    }
-
-                    playClick(nextBeatTime.current, currentBeat.current);
-
-                    // Update UI on the main thread
-                    const beatToShow = currentBeat.current;
-                    setTimeout(() => {
-                        onBeatChange(beatToShow);
-                    }, (nextBeatTime.current - audioContext.current.currentTime) * 1000);
-
-                    nextBeatTime.current += secondsPerBeat;
-                    currentBeat.current++; // Increment after using
-                }
-
-                schedulerTimer.current = setTimeout(scheduler, 25); // Check every 25ms
-            };
-
-            scheduler();
-        } else {
-            onBeatChange(0);
+        if (!isPlaying) {
+            setCurrentBeat(1);
+            onBeatChange(1);
+            return;
         }
 
-        return () => {
-            if (schedulerTimer.current) {
-                clearTimeout(schedulerTimer.current);
+        // Calculate number of beats
+        let totalBeats = 4;
+        if (timeSig === '9/8') totalBeats = 3;
+        else if (timeSig === '6/8') totalBeats = 6;
+
+        // Calculate interval in milliseconds
+        const interval = (60000 / tempo); // ms per beat
+
+        let beat = 1;
+        let count = 0;
+
+        // Initialize
+        console.log('[Metronome] Starting at beat 1');
+        onBeatChange(1);
+
+        // Play click sound
+        const playClick = (isFirstBeat) => {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.frequency.value = isFirstBeat ? 800 : 400;
+            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.1);
+        };
+
+        // Beat timer
+        const timer = setInterval(() => {
+            count++;
+
+            if (count > totalBeats) {
+                clearInterval(timer);
+                onComplete();
+                console.log('[Metronome] Complete!');
+                return;
             }
+
+            // Play sound
+            playClick(beat === 1);
+
+            // Update UI
+            console.log('[Metronome] Beat:', beat);
+            onBeatChange(beat);
+            setCurrentBeat(beat);
+
+            // Increment beat (cycle 1-4 or 1-6 or 1-3)
+            beat++;
+            if (beat > totalBeats) {
+                beat = 1;
+            }
+        }, interval);
+
+        return () => {
+            clearInterval(timer);
+            console.log('[Metronome] Cleaned up');
         };
     }, [isPlaying, tempo, timeSig, onComplete, onBeatChange]);
 
-    return null; // This is a logic-only component
+    return null; // Logic-only component
 }
