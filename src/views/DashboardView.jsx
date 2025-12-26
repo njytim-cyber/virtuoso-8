@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Play, TrendingUp, Trophy, ClipboardList, Calendar, Share } from 'lucide-react';
+import pkg from '../../package.json';
 
 // Calculate days until exam (April 1st, 2026)
 const EXAM_DATE = new Date('2026-04-01T00:00:00');
@@ -164,7 +165,10 @@ Practice makes progress!`;
                                     Hi, {name}
                                 </h1>
                             )}
-                            <p className="text-sm text-gray-500">Ready for your Grade 8 prep?</p>
+                            <p className="text-sm text-gray-500">
+                                Ready for your Grade 8 prep?
+                                <span className="ml-2 text-xs text-indigo-300 font-mono">v{pkg.version}</span>
+                            </p>
                         </div>
                     </div>
 

@@ -67,6 +67,8 @@ export default function SessionView({
         // Normalize for TTS pronunciation
         text = text.replace(/#/g, " Sharp");
         text = text.replace(/\b([A-G])b\b/g, "$1 Flat");
+        text = text.replace(/3rds/g, " Thirds");
+        text = text.replace(/6ths/g, " Sixths");
         text = text.replace(/\(2 Oct\)/g, "2 Octaves");
         text = text.replace(/\(3 Oct\)/g, "3 Octaves");
         text = text.replace(/\(1 Oct\)/g, "1 Octave");
