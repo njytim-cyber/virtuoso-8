@@ -275,7 +275,7 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
                     return (
                         <div key={category.id}>
                             {/* Category Header */}
-                            <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center justify-between mb-3 select-none">
                                 <div className="flex items-center space-x-2">
                                     <div className={`${colors.bg} p-1.5 rounded-lg`}>
                                         <Icon className={colors.text} size={16} />

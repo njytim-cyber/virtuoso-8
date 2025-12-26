@@ -189,7 +189,7 @@ export default function ReviewView({ history, progressLog = {}, onBack }) {
 
                             return (
                                 <div key={category.id} className={`bg-slate-800 rounded-xl overflow-hidden border ${colors.border}`}>
-                                    <div className={`${colors.bg} px-4 py-3 flex items-center justify-between`}>
+                                    <div className={`${colors.bg} px-4 py-3 flex items-center justify-between select-none`}>
                                         <div className="flex items-center space-x-2">
                                             <Icon size={18} className="text-white" />
                                             <h4 className="font-bold text-white">{category.title} <span className="text-white/60 text-sm font-normal ml-1">({category.marks} marks)</span></h4>
@@ -246,7 +246,7 @@ export default function ReviewView({ history, progressLog = {}, onBack }) {
                             return (
                                 <div key={cat} className="bg-slate-800 rounded-2xl overflow-hidden border border-slate-700">
                                     {/* Category Header */}
-                                    <div className="bg-slate-700/50 px-4 py-3 flex items-center justify-between">
+                                    <div className="bg-slate-700/50 px-4 py-3 flex items-center justify-between select-none">
                                         <h3 className="font-bold text-lg">{cat}</h3>
                                         <div className="flex items-center space-x-3 text-sm">
                                             <span className="text-slate-400">
