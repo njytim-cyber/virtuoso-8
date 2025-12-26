@@ -27,6 +27,11 @@ export default function AppContainerMock() {
         return saved ? JSON.parse(saved) : {};
     });
 
+    const [darkMode, setDarkMode] = useState(() => {
+        const saved = localStorage.getItem('virtuoso8_darkMode');
+        return saved ? JSON.parse(saved) : false;
+    });
+
     const [view, setView] = useState(() => userData ? 'dashboard' : 'onboarding');
     const [sessionQueue, setSessionQueue] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,6 +50,15 @@ export default function AppContainerMock() {
     useEffect(() => {
         localStorage.setItem('virtuoso8_progressLog', JSON.stringify(progressLog));
     }, [progressLog]);
+
+    useEffect(() => {
+        localStorage.setItem('virtuoso8_darkMode', JSON.stringify(darkMode));
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [darkMode]);
 
     const handleCreateProfile = (name) => {
         if (!name.trim()) return;
@@ -117,7 +131,7 @@ export default function AppContainerMock() {
         case 'onboarding':
             return <OnboardingView onSave={handleCreateProfile} />;
         case 'dashboard':
-            return <DashboardView userData={userData} history={history} progressLog={progressLog} onStart={handleStartSession} onReview={() => setView('review')} onLogProgress={() => setView('progressLog')} onUpdateName={handleUpdateName} />;
+            return <DashboardView userData={userData} history={history} progressLog={progressLog} darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} onStart={handleStartSession} onReview={() => setView('review')} onLogProgress={() => setView('progressLog')} onUpdateName={handleUpdateName} />;
         case 'progressLog':
             return <ProgressLogView progressLog={progressLog} onBack={() => setView('dashboard')} onLogProgress={handleLogProgress} />;
         case 'session':
@@ -127,6 +141,6 @@ export default function AppContainerMock() {
         case 'review':
             return <ReviewView history={history} progressLog={progressLog} userData={userData} onBack={() => setView('dashboard')} />;
         default:
-            return <DashboardView userData={userData} history={history} progressLog={progressLog} onStart={handleStartSession} onReview={() => setView('review')} onLogProgress={() => setView('progressLog')} onUpdateName={handleUpdateName} />;
+            return <DashboardView userData={userData} history={history} progressLog={progressLog} darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} onStart={handleStartSession} onReview={() => setView('review')} onLogProgress={() => setView('progressLog')} onUpdateName={handleUpdateName} />;
     }
 }

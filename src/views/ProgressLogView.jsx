@@ -177,27 +177,27 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
 
     const colorClasses = {
         indigo: {
-            bg: 'bg-indigo-100',
-            bgDark: 'bg-indigo-600',
-            text: 'text-indigo-600',
-            border: 'border-indigo-200',
-            borderHover: 'hover:border-indigo-400',
+            bg: 'bg-indigo-100 dark:bg-indigo-900/40',
+            bgDark: 'bg-indigo-600 dark:bg-indigo-500',
+            text: 'text-indigo-600 dark:text-indigo-300',
+            border: 'border-indigo-200 dark:border-indigo-800',
+            borderHover: 'hover:border-indigo-400 dark:hover:border-indigo-500',
             gradient: 'from-indigo-600 to-indigo-700'
         },
         emerald: {
-            bg: 'bg-emerald-100',
-            bgDark: 'bg-emerald-600',
-            text: 'text-emerald-600',
-            border: 'border-emerald-200',
-            borderHover: 'hover:border-emerald-400',
+            bg: 'bg-emerald-100 dark:bg-emerald-900/40',
+            bgDark: 'bg-emerald-600 dark:bg-emerald-500',
+            text: 'text-emerald-600 dark:text-emerald-300',
+            border: 'border-emerald-200 dark:border-emerald-800',
+            borderHover: 'hover:border-emerald-400 dark:hover:border-emerald-500',
             gradient: 'from-emerald-600 to-emerald-700'
         },
         purple: {
-            bg: 'bg-purple-100',
-            bgDark: 'bg-purple-600',
-            text: 'text-purple-600',
-            border: 'border-purple-200',
-            borderHover: 'hover:border-purple-400',
+            bg: 'bg-purple-100 dark:bg-purple-900/40',
+            bgDark: 'bg-purple-600 dark:bg-purple-500',
+            text: 'text-purple-600 dark:text-purple-300',
+            border: 'border-purple-200 dark:border-purple-800',
+            borderHover: 'hover:border-purple-400 dark:hover:border-purple-500',
             gradient: 'from-purple-600 to-purple-700'
         }
     };
@@ -207,23 +207,23 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
         const colors = colorClasses[selectedCategory?.color || 'indigo'];
 
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col">
-                <header className="bg-white shadow-sm p-4">
-                    <div className="max-w-2xl mx-auto flex items-center">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col transition-colors">
+                <header className="bg-white dark:bg-slate-800 shadow-sm p-4 transition-colors">
+                    <div className="max-w-7xl mx-auto flex items-center">
                         <button
                             onClick={() => { setSelectedItem(null); setRating(0); }}
-                            className="p-2 -ml-2 text-gray-600 hover:text-gray-900"
+                            className="p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                         >
                             <ArrowLeft size={24} />
                         </button>
-                        <h1 className="text-xl font-bold text-gray-800 ml-2">Rate Your Progress</h1>
+                        <h1 className="text-xl font-bold text-gray-800 dark:text-white ml-2">Rate Your Progress</h1>
                     </div>
                 </header>
 
                 <div className="flex-1 flex flex-col items-center px-4 py-6 overflow-y-auto">
-                    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md w-full text-center mb-4">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-1">{selectedItem.label}</h2>
-                        <p className="text-gray-500 text-sm mb-6">{selectedItem.subtitle}</p>
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 max-w-md w-full text-center mb-4 transition-colors">
+                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">{selectedItem.label}</h2>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">{selectedItem.subtitle}</p>
 
                         <StarRating rating={rating} setRating={setRating} />
 
@@ -254,20 +254,20 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
 
     // Main grid view - all items visible
     return (
-        <div className="min-h-screen bg-gray-50">
-            <header className="bg-white shadow-sm p-4 select-none">
-                <div className="max-w-2xl mx-auto flex items-center">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors">
+            <header className="bg-white dark:bg-slate-800 shadow-sm p-4 select-none transition-colors">
+                <div className="max-w-7xl mx-auto flex items-center">
                     <button
                         onClick={onBack}
-                        className="p-2 -ml-2 text-gray-600 hover:text-gray-900"
+                        className="p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                     >
                         <ArrowLeft size={24} />
                     </button>
-                    <h1 className="text-xl font-bold text-gray-800 ml-2">Log My Progress</h1>
+                    <h1 className="text-xl font-bold text-gray-800 dark:text-white ml-2">Log My Progress</h1>
                 </div>
             </header>
 
-            <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+            <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
                 {PROGRESS_CATEGORIES.map((category) => {
                     const Icon = category.icon;
                     const colors = colorClasses[category.color];
@@ -286,7 +286,7 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
                             </div>
 
                             {/* Items Grid */}
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {category.items.map((item) => {
                                     const itemRating = savedItems[item.id] || 0;
                                     const isMastered = itemRating >= 4;
@@ -295,12 +295,12 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
                                         <button
                                             key={item.id}
                                             onClick={() => handleSelectItem(item, category)}
-                                            className={`bg-white p-4 rounded-xl shadow-sm border ${colors.border} ${colors.borderHover} hover:shadow-md transition-all text-center ${isMastered ? 'ring-2 ring-green-400 ring-opacity-50' : ''}`}
+                                            className={`bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border ${colors.border} ${colors.borderHover} hover:shadow-md transition-all text-center ${isMastered ? 'ring-2 ring-green-400 ring-opacity-50' : ''}`}
                                         >
-                                            <p className={`font-bold text-lg ${isMastered ? 'text-green-600' : 'text-gray-800'}`}>
+                                            <p className={`font-bold text-lg ${isMastered ? 'text-green-600 dark:text-green-400' : 'text-gray-800 dark:text-white'}`}>
                                                 {item.label}
                                             </p>
-                                            <p className="text-xs text-gray-500 mb-2 truncate">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 truncate">
                                                 {item.subtitle}
                                             </p>
                                             <StarDisplay rating={itemRating} />

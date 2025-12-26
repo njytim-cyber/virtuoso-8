@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Play, TrendingUp, Trophy, ClipboardList, Calendar, Share } from 'lucide-react';
+import { Play, TrendingUp, Trophy, ClipboardList, Calendar, Share, Moon, Sun } from 'lucide-react';
 
 // Calculate days until exam (April 1st, 2026)
 const EXAM_DATE = new Date('2026-04-01T00:00:00');
@@ -62,7 +62,7 @@ function calculateEstimatedMark(history, progressLog) {
  * @param {Function} props.onLogProgress - Open progress log callback
  * @param {Function} props.onUpdateName - Update user name callback
  */
-export default function DashboardView({ userData, history, progressLog = {}, onStart, onReview, onLogProgress, onUpdateName }) {
+export default function DashboardView({ userData, history, progressLog = {}, onStart, onReview, onLogProgress, onUpdateName, darkMode, toggleDarkMode }) {
     const [isEditingName, setIsEditingName] = useState(false);
     const [editedName, setEditedName] = useState('');
 
@@ -134,12 +134,12 @@ Practice makes progress!`;
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
-            <header className="bg-white shadow-sm p-6 mb-6">
-                <div className="max-w-2xl mx-auto flex justify-between items-center">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors pb-20">
+            <header className="bg-white dark:bg-slate-800 shadow-sm p-6 mb-6 transition-colors">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center space-x-3">
                         {/* User Avatar */}
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 border border-gray-800">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 border border-gray-800 dark:border-gray-600">
                             <img src="/avatar.png" alt="User avatar" className="w-full h-full object-cover" />
                         </div>
 
@@ -153,42 +153,49 @@ Practice makes progress!`;
                                     onBlur={handleNameSave}
                                     onKeyDown={handleKeyPress}
                                     autoFocus
-                                    className="text-2xl font-bold text-gray-800 border-b-2 border-indigo-500 outline-none bg-transparent px-1"
+                                    className="text-2xl font-bold text-gray-800 dark:text-white border-b-2 border-indigo-500 outline-none bg-transparent px-1"
                                 />
                             ) : (
                                 <h1
-                                    className="text-2xl font-bold text-gray-800 cursor-pointer hover:text-indigo-600 transition-colors"
+                                    className="text-2xl font-bold text-gray-800 dark:text-white cursor-pointer hover:text-indigo-600 transition-colors"
                                     onClick={handleNameClick}
                                     title="Click to edit name"
                                 >
                                     Hi, {name}
                                 </h1>
                             )}
-                            <p className="text-sm text-gray-500">Ready for your Grade 8 prep?</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Ready for your Grade 8 prep?</p>
                         </div>
                     </div>
 
                     <div className="flex items-center space-x-3">
-                        <div className="flex items-center space-x-2 bg-orange-50 px-3 py-1 rounded-full text-orange-700">
+                        <div className="flex items-center space-x-2 bg-orange-50 dark:bg-orange-900/20 px-3 py-1 rounded-full text-orange-700 dark:text-orange-300">
                             <Calendar size={16} />
                             <span className="font-bold">{getDaysUntilExam()} Days</span>
                         </div>
-                        <div className="flex items-center space-x-2 bg-indigo-50 px-3 py-1 rounded-full text-indigo-700">
+                        <div className="flex items-center space-x-2 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300">
                             <Trophy size={16} />
                             <span className="font-bold">{streaks} Day Streak</span>
                         </div>
                         <button
                             onClick={handleShare}
-                            className="p-2 hover:bg-gray-100 rounded-full text-indigo-600 transition-colors"
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full text-indigo-600 dark:text-indigo-400 transition-colors"
                             title="Share Progress"
                         >
                             <Share size={20} />
+                        </button>
+                        <button
+                            onClick={toggleDarkMode}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full text-gray-600 dark:text-gray-300 transition-colors"
+                            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                        >
+                            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
                     </div>
                 </div>
             </header>
 
-            <div className="max-w-2xl mx-auto px-4 space-y-6">
+            <div className="max-w-7xl mx-auto px-4 space-y-6">
                 <button
                     onClick={onReview}
                     className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all cursor-pointer"
@@ -213,27 +220,27 @@ Practice makes progress!`;
                     </div>
                 </button>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                     <button
                         onClick={onStart}
-                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all group text-left"
+                        className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:border-indigo-500 hover:shadow-md transition-all group text-left"
                     >
-                        <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
-                            <Play className="text-indigo-600 group-hover:text-white" fill="currentColor" />
+                        <div className="bg-indigo-100 dark:bg-indigo-900/30 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
+                            <Play className="text-indigo-600 dark:text-indigo-400 group-hover:text-white" fill="currentColor" />
                         </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Scales and Arpeggios</h3>
-                        <p className="text-sm text-gray-500">4 exercises</p>
+                        <h3 className="font-bold text-gray-800 dark:text-white text-lg">Scales and Arpeggios</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">4 exercises</p>
                     </button>
 
                     <button
                         onClick={onLogProgress}
-                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-purple-500 hover:shadow-md transition-all group text-left"
+                        className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:border-purple-500 hover:shadow-md transition-all group text-left"
                     >
-                        <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
-                            <ClipboardList className="text-purple-600 group-hover:text-white" />
+                        <div className="bg-purple-100 dark:bg-purple-900/30 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
+                            <ClipboardList className="text-purple-600 dark:text-purple-400 group-hover:text-white" />
                         </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Log My Progress</h3>
-                        <p className="text-sm text-gray-500">Pieces, Aural, Sight-Reading</p>
+                        <h3 className="font-bold text-gray-800 dark:text-white text-lg">Log My Progress</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Pieces, Aural, Sight-Reading</p>
                     </button>
                 </div>
 

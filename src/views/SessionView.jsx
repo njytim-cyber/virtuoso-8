@@ -65,6 +65,14 @@ export default function SessionView({
         let text = `${currentQ.title}, ${bowing}`;
 
         // Normalize for TTS pronunciation
+        text = text.replace(/Ab/g, "A Flat");
+        text = text.replace(/Bb/g, "B Flat");
+        text = text.replace(/Db/g, "D Flat");
+        text = text.replace(/Eb/g, "E Flat");
+        text = text.replace(/G#/g, "G Sharp");
+        text = text.replace(/C#/g, "C Sharp");
+        text = text.replace(/F#/g, "F Sharp");
+
         text = text.replace(/\(2 Oct\)/g, "2 Octaves");
         text = text.replace(/\(3 Oct\)/g, "3 Octaves");
         text = text.replace(/\(1 Oct\)/g, "1 Octave");
@@ -162,7 +170,7 @@ export default function SessionView({
                     </div>
                 )}
 
-                <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-2xl mx-auto w-full">
+                <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-5xl mx-auto w-full">
                     {/* Back Button + Header Info */}
                     <div className="w-full flex justify-between items-center text-gray-400 mb-8">
                         <div className="flex items-center space-x-3">
