@@ -186,11 +186,11 @@ Practice makes progress!`;
             </div>
 
             {/* Header / Hero */}
-            <header className="bg-white dark:bg-slate-800 shadow-sm pt-6 pb-8 px-6 mb-6 transition-colors border-b border-gray-100 dark:border-slate-700">
+            <header className="bg-white dark:bg-slate-800 shadow-sm py-4 px-6 mb-6 transition-colors border-b border-gray-100 dark:border-slate-700">
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex justify-between items-start mb-6">
+                    <div className="flex justify-between items-start mb-4">
                         <div className="flex items-center space-x-4">
-                            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-md">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
                                 <img src="/avatar.png" alt="User" className="w-full h-full object-cover" />
                             </div>
                             <div>
@@ -202,43 +202,43 @@ Practice makes progress!`;
                                         onBlur={handleNameSave}
                                         onKeyDown={handleKeyPress}
                                         autoFocus
-                                        className="text-3xl font-bold text-gray-900 dark:text-white border-b-2 border-indigo-500 outline-none bg-transparent px-1"
+                                        className="text-2xl font-bold text-gray-900 dark:text-white border-b-2 border-indigo-500 outline-none bg-transparent px-1"
                                     />
                                 ) : (
                                     <h1
-                                        className="text-3xl font-bold text-gray-900 dark:text-white cursor-pointer hover:text-indigo-600 transition-colors"
+                                        className="text-2xl font-bold text-gray-900 dark:text-white cursor-pointer hover:text-indigo-600 transition-colors"
                                         onClick={handleNameClick}
                                     >
                                         Hi, {name}
                                     </h1>
                                 )}
-                                <p className="text-gray-500 dark:text-gray-400">Ready to master Grade 8?</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm">Ready to master Grade 8?</p>
                             </div>
                         </div>
 
                         <div className="text-right">
-                            <div className="text-4xl font-black text-indigo-600 dark:text-indigo-400 leading-none">
-                                {estimatedMark}<span className="text-lg text-gray-400 font-medium">/150</span>
+                            <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400 leading-none">
+                                {estimatedMark}<span className="text-sm text-gray-400 font-medium">/150</span>
                             </div>
-                            <div className={`font-semibold ${color}`}>{grade}</div>
+                            <div className={`font-semibold text-sm ${color}`}>{grade}</div>
                         </div>
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {Object.values(breakdown).map((stat) => (
-                            <div key={stat.label} className="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 flex flex-col justify-between">
-                                <div className="flex justify-between items-start mb-2">
-                                    <div className={`p-2 rounded-lg ${stat.bg} ${stat.color}`}>
-                                        <stat.icon size={20} />
+                            <div key={stat.label} className="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-3 flex flex-col justify-between">
+                                <div className="flex justify-between items-start mb-1">
+                                    <div className={`p-1.5 rounded-md ${stat.bg} ${stat.color}`}>
+                                        <stat.icon size={16} />
                                     </div>
-                                    <span className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500 tracking-wider">
+                                    <span className="text-[10px] font-semibold uppercase text-gray-400 dark:text-gray-500 tracking-wider">
                                         / {stat.max}
                                     </span>
                                 </div>
                                 <div>
-                                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{stat.score}</div>
-                                    <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">{stat.label}</div>
+                                    <div className="text-xl font-bold text-gray-800 dark:text-white">{stat.score}</div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">{stat.label}</div>
                                 </div>
                             </div>
                         ))}
@@ -246,72 +246,78 @@ Practice makes progress!`;
                 </div>
             </header>
 
-            <div className="max-w-7xl mx-auto px-6 space-y-8">
+            <div className="max-w-7xl mx-auto px-6 space-y-5">
 
                 {/* Next Action Card */}
                 <section>
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">Suggested Practice</h2>
+                    <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">Suggested Practice</h2>
                     <button
                         onClick={onStart}
-                        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 md:p-8 text-white shadow-xl hover:shadow-2xl hover:scale-[1.01] transition-all group text-left relative overflow-hidden"
+                        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-5 md:p-6 text-white shadow-lg hover:shadow-xl hover:scale-[1.005] transition-all group text-left relative overflow-hidden"
                     >
-                        <div className="absolute top-0 right-0 p-8 opacity-10">
-                            <Play size={120} />
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Play size={100} />
                         </div>
                         <div className="relative z-10">
-                            <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-xs font-bold mb-4 border border-white/20">
-                                <Play size={12} fill="currentColor" />
+                            <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md rounded-full px-2.5 py-0.5 text-[10px] font-bold mb-3 border border-white/20">
+                                <Play size={10} fill="currentColor" />
                                 <span>NEXT UP</span>
                             </div>
-                            <h3 className="text-2xl md:text-4xl font-bold mb-2 leading-tight max-w-2xl">
+                            <h3 className="text-xl md:text-3xl font-bold mb-1 leading-tight max-w-2xl">
                                 {nextAction.title}
                             </h3>
-                            <div className="text-indigo-100 font-medium">{nextAction.cat} • {nextAction.time}</div>
+                            <div className="text-indigo-100 font-medium text-sm">{nextAction.cat} • {nextAction.time}</div>
 
-                            <div className="mt-6 flex items-center font-bold text-sm bg-white text-indigo-600 px-6 py-3 rounded-full inline-block group-hover:bg-indigo-50 transition-colors">
-                                Start Practice <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                            <div className="mt-4 flex items-center font-bold text-xs bg-white text-indigo-600 px-4 py-2 rounded-full inline-block group-hover:bg-indigo-50 transition-colors">
+                                Start Practice <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
                             </div>
                         </div>
                     </button>
                 </section>
 
                 {/* Secondary Actions Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
                     {/* Scales (Browse) */}
                     <button
                         onClick={onStart}
-                        className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:border-indigo-500 hover:shadow-md transition-all group text-left flex flex-col h-full"
+                        className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:border-indigo-500 hover:shadow-md transition-all group text-left flex flex-row md:flex-col items-center md:items-start h-full"
                     >
-                        <div className="mb-4 bg-indigo-50 dark:bg-indigo-900/20 w-12 h-12 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
-                            <Play fill="currentColor" size={24} />
+                        <div className="mr-4 md:mr-0 md:mb-3 bg-indigo-50 dark:bg-indigo-900/20 w-10 h-10 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                            <Play fill="currentColor" size={20} />
                         </div>
-                        <h3 className="font-bold text-gray-800 dark:text-white text-lg mb-1">Browse Scales</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">42 Exercises</p>
+                        <div>
+                            <h3 className="font-bold text-gray-800 dark:text-white text-base md:text-lg mb-0.5">Browse Scales</h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">42 Exercises</p>
+                        </div>
                     </button>
 
                     {/* Log Progress */}
                     <button
                         onClick={onLogProgress}
-                        className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:border-purple-500 hover:shadow-md transition-all group text-left flex flex-col h-full"
+                        className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:border-purple-500 hover:shadow-md transition-all group text-left flex flex-row md:flex-col items-center md:items-start h-full"
                     >
-                        <div className="mb-4 bg-purple-50 dark:bg-purple-900/20 w-12 h-12 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
-                            <ClipboardList size={24} />
+                        <div className="mr-4 md:mr-0 md:mb-3 bg-purple-50 dark:bg-purple-900/20 w-10 h-10 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
+                            <ClipboardList size={20} />
                         </div>
-                        <h3 className="font-bold text-gray-800 dark:text-white text-lg mb-1">Log Progress</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Pieces, Aural, Sight-Reading</p>
+                        <div>
+                            <h3 className="font-bold text-gray-800 dark:text-white text-base md:text-lg mb-0.5">Log Progress</h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Pieces, Aural, Sight-Reading</p>
+                        </div>
                     </button>
 
                     {/* Quick Record */}
                     <button
                         onClick={() => alert("Recording started! (Mock)")}
-                        className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:border-red-500 hover:shadow-md transition-all group text-left flex flex-col h-full"
+                        className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:border-red-500 hover:shadow-md transition-all group text-left flex flex-row md:flex-col items-center md:items-start h-full"
                     >
-                        <div className="mb-4 bg-red-50 dark:bg-red-900/20 w-12 h-12 rounded-xl flex items-center justify-center text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform">
-                            <Mic size={24} />
+                        <div className="mr-4 md:mr-0 md:mb-3 bg-red-50 dark:bg-red-900/20 w-10 h-10 rounded-lg flex items-center justify-center text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform">
+                            <Mic size={20} />
                         </div>
-                        <h3 className="font-bold text-gray-800 dark:text-white text-lg mb-1">Quick Record</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Capture a run-through</p>
+                        <div>
+                            <h3 className="font-bold text-gray-800 dark:text-white text-base md:text-lg mb-0.5">Quick Record</h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Capture a run-through</p>
+                        </div>
                     </button>
 
                 </div>
