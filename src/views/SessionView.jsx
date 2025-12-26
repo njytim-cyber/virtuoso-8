@@ -62,7 +62,13 @@ export default function SessionView({
         window.speechSynthesis.cancel();
         // Use variant for bowing, or map 'both' to 'Separate Bows' if variant missing
         const bowing = currentQ.variant || (currentQ.bow === 'both' ? 'Separate Bows' : currentQ.bow);
-        const text = `${currentQ.title}, ${bowing}`;
+        let text = `${currentQ.title}, ${bowing}`;
+
+        // Normalize for TTS pronunciation
+        text = text.replace(/\(2 Oct\)/g, "2 Octaves");
+        text = text.replace(/\(3 Oct\)/g, "3 Octaves");
+        text = text.replace(/\(1 Oct\)/g, "1 Octave");
+
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
