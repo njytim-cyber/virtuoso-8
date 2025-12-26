@@ -56,6 +56,23 @@ export default function SessionView({
         onStartCountIn();
     };
 
+    // TTS Effect
+    const speakAnnouncement = () => {
+        if (!currentQ) return;
+        window.speechSynthesis.cancel();
+        // Use variant for bowing, or map 'both' to 'Separate Bows' if variant missing
+        const bowing = currentQ.variant || (currentQ.bow === 'both' ? 'Separate Bows' : currentQ.bow);
+        const text = `${currentQ.title}, ${bowing}`;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+    };
+
+    useEffect(() => {
+        speakAnnouncement();
+        return () => window.speechSynthesis.cancel();
+    }, [currentQ]);
+
     // Stats Logic
     const qHistory = history.filter(h => h.questionId === currentQ.id);
     const attempts = qHistory.length;
@@ -162,9 +179,18 @@ export default function SessionView({
 
                     {/* Main Card */}
                     <div className="w-full text-center space-y-6">
-                        <h2 className="text-3xl md:text-5xl font-bold leading-tight">
-                            {formatTitle(currentQ.title)}
-                        </h2>
+                        <div className="relative">
+                            <h2 className="text-3xl md:text-5xl font-bold leading-tight px-8">
+                                {formatTitle(currentQ.title)}
+                            </h2>
+                            <button
+                                onClick={speakAnnouncement}
+                                className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-white transition-colors"
+                                title="Replay Audio"
+                            >
+                                <Volume2 size={24} />
+                            </button>
+                        </div>
 
                         <div className="bg-indigo-900/30 border border-indigo-500/30 p-6 rounded-xl inline-block w-full max-w-lg mx-auto backdrop-blur-sm">
                             <p className="text-indigo-300 text-xs uppercase tracking-widest font-bold mb-2">Bowing Technique</p>

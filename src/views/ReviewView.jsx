@@ -5,7 +5,9 @@ import { QUESTIONS } from '@data/questions';
 const PROGRESS_CATEGORIES = [
     {
         id: 'pieces',
+
         title: 'Pieces',
+        marks: 90,
         icon: Music,
         color: 'indigo',
         items: [
@@ -16,7 +18,9 @@ const PROGRESS_CATEGORIES = [
     },
     {
         id: 'sight_reading',
+
         title: 'Sight-Reading',
+        marks: 21,
         icon: Eye,
         color: 'emerald',
         items: [
@@ -27,7 +31,9 @@ const PROGRESS_CATEGORIES = [
     },
     {
         id: 'aural',
+
         title: 'Aural Tests',
+        marks: 18,
         icon: Headphones,
         color: 'purple',
         items: [
@@ -84,7 +90,7 @@ function calculateEstimatedMark(history, progressLog) {
  * @param {Function} props.onBack - Return to dashboard callback
  */
 export default function ReviewView({ history, progressLog = {}, onBack }) {
-    const categories = ['Scales', 'Arpeggios', 'Misc', 'DoubleStops'];
+    const categories = ['Scales', 'Arpeggios', 'Dominants, Diminished and Chromatics', 'Double Stops'];
     const estimatedMark = calculateEstimatedMark(history, progressLog);
 
     const getStats = (qId) => {
@@ -186,7 +192,7 @@ export default function ReviewView({ history, progressLog = {}, onBack }) {
                                     <div className={`${colors.bg} px-4 py-3 flex items-center justify-between`}>
                                         <div className="flex items-center space-x-2">
                                             <Icon size={18} className="text-white" />
-                                            <h4 className="font-bold text-white">{category.title}</h4>
+                                            <h4 className="font-bold text-white">{category.title} <span className="text-white/60 text-sm font-normal ml-1">({category.marks} marks)</span></h4>
                                         </div>
                                         <span className="text-white/80 text-sm">
                                             {stats.rated}/{stats.total} rated
@@ -231,7 +237,7 @@ export default function ReviewView({ history, progressLog = {}, onBack }) {
 
                 {/* Technical Work (Scales & Arpeggios) */}
                 <div>
-                    <h3 className="text-lg font-semibold text-slate-300 mb-3">Technical Work</h3>
+                    <h3 className="text-lg font-semibold text-slate-300 mb-3">Technical Work (21 marks)</h3>
                     <div className="grid md:grid-cols-2 gap-6">
                         {categories.map(cat => {
                             const catStats = getCategoryStats(cat);

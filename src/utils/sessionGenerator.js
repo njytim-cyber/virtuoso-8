@@ -25,8 +25,8 @@ export const generateSession = (history) => {
     const session = [
         getWeightedRandom('Scales'),
         getWeightedRandom('Arpeggios'),
-        getWeightedRandom('Misc'),
-        getWeightedRandom('DoubleStops')
+        getWeightedRandom('Dominants, Diminished and Chromatics'),
+        getWeightedRandom('Double Stops')
     ];
 
     // Assign bowing variants
