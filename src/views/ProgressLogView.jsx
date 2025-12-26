@@ -207,32 +207,32 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
         const colors = colorClasses[selectedCategory?.color || 'indigo'];
 
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col">
-                <header className="bg-white shadow-sm p-4">
+            <div className="min-h-screen bg-gray-900 flex flex-col">
+                <header className="bg-gray-800/50 backdrop-blur shadow-sm p-4 border-b border-gray-700">
                     <div className="max-w-2xl mx-auto flex items-center">
                         <button
                             onClick={() => { setSelectedItem(null); setRating(0); }}
-                            className="p-2 -ml-2 text-gray-600 hover:text-gray-900"
+                            className="p-2 -ml-2 text-gray-400 hover:text-white transition-colors"
                         >
                             <ArrowLeft size={24} />
                         </button>
-                        <h1 className="text-xl font-bold text-gray-800 ml-2">Rate Your Progress</h1>
+                        <h1 className="text-xl font-bold text-white ml-2">Rate Your Progress</h1>
                     </div>
                 </header>
 
                 <div className="flex-1 flex flex-col items-center px-4 py-6 overflow-y-auto">
-                    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md w-full text-center mb-4">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-1">{selectedItem.label}</h2>
-                        <p className="text-gray-500 text-sm mb-6">{selectedItem.subtitle}</p>
+                    <div className="bg-gray-800 rounded-2xl shadow-lg border border-gray-700 p-6 max-w-md w-full text-center mb-4">
+                        <h2 className="text-lg font-semibold text-white mb-1">{selectedItem.label}</h2>
+                        <p className="text-gray-400 text-sm mb-6">{selectedItem.subtitle}</p>
 
                         <StarRating rating={rating} setRating={setRating} />
 
                         <button
                             onClick={handleSaveRating}
                             disabled={rating === 0}
-                            className={`mt-6 w-full py-3 px-6 rounded-xl font-semibold text-white transition-all ${rating > 0
-                                ? `bg-gradient-to-r ${colors.gradient} hover:shadow-lg`
-                                : 'bg-gray-300 cursor-not-allowed'
+                            className={`mt-6 w-full py-4 px-6 rounded-xl font-black text-lg text-white transition-all transform hover:scale-[1.02] active:scale-[0.98] ${rating > 0
+                                ? 'bg-indigo-500 hover:bg-indigo-400 shadow-lg shadow-indigo-500/40'
+                                : 'bg-gray-700 text-gray-500 cursor-not-allowed'
                                 }`}
                         >
                             Save Rating
@@ -254,34 +254,35 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
 
     // Main grid view - all items visible
     return (
-        <div className="min-h-screen bg-gray-50">
-            <header className="bg-white shadow-sm p-4 select-none">
+        <div className="min-h-screen bg-gray-900 text-gray-300">
+            <header className="bg-gray-800/50 backdrop-blur shadow-sm p-4 border-b border-gray-700 select-none sticky top-0 z-10">
                 <div className="max-w-2xl mx-auto flex items-center">
                     <button
                         onClick={onBack}
-                        className="p-2 -ml-2 text-gray-600 hover:text-gray-900"
+                        className="p-2 -ml-2 text-gray-400 hover:text-white transition-colors"
                     >
                         <ArrowLeft size={24} />
                     </button>
-                    <h1 className="text-xl font-bold text-gray-800 ml-2">Log My Progress</h1>
+                    <h1 className="text-xl font-bold text-white ml-2">Log My Progress</h1>
                 </div>
             </header>
 
             <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
                 {PROGRESS_CATEGORIES.map((category) => {
                     const Icon = category.icon;
-                    const colors = colorClasses[category.color];
+                    // Using neutral dark styling for containers instead of colored backgrounds to keep it clean
+                    // const colors = colorClasses[category.color];
 
                     return (
                         <div key={category.id}>
                             {/* Category Header */}
                             <div className="flex items-center justify-between mb-3 select-none">
                                 <div className="flex items-center space-x-2">
-                                    <div className={`${colors.bg} p-1.5 rounded-lg`}>
-                                        <Icon className={colors.text} size={16} />
+                                    <div className="bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+                                        <Icon className="text-indigo-400" size={16} />
                                     </div>
-                                    <h3 className="font-semibold text-gray-700">{category.title}</h3>
-                                    <span className="text-xs text-gray-400">({category.marks} marks)</span>
+                                    <h3 className="font-semibold text-gray-200">{category.title}</h3>
+                                    <span className="text-xs text-gray-500">({category.marks} marks)</span>
                                 </div>
                             </div>
 
@@ -295,9 +296,9 @@ export default function ProgressLogView({ onBack, onLogProgress, progressLog = {
                                         <button
                                             key={item.id}
                                             onClick={() => handleSelectItem(item, category)}
-                                            className={`bg-white p-4 rounded-xl shadow-sm border ${colors.border} ${colors.borderHover} hover:shadow-md transition-all text-center ${isMastered ? 'ring-2 ring-green-400 ring-opacity-50' : ''}`}
+                                            className={`bg-gray-800 p-4 rounded-xl shadow-sm border transition-all text-center group ${isMastered ? 'border-green-500/50 ring-1 ring-green-500/30' : 'border-gray-700 hover:border-gray-500'}`}
                                         >
-                                            <p className={`font-bold text-lg ${isMastered ? 'text-green-600' : 'text-gray-800'}`}>
+                                            <p className={`font-bold text-lg mb-1 ${isMastered ? 'text-green-400' : 'text-gray-100 group-hover:text-white'}`}>
                                                 {item.label}
                                             </p>
                                             <p className="text-xs text-gray-500 mb-2 truncate">

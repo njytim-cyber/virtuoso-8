@@ -10,8 +10,8 @@ describe('sessionGenerator', () => {
             expect(session).toHaveLength(4);
             expect(session[0].cat).toBe('Scales');
             expect(session[1].cat).toBe('Arpeggios');
-            expect(session[2].cat).toBe('Misc');
-            expect(session[3].cat).toBe('DoubleStops');
+            expect(session[2].cat).toBe('Dominants, Diminished and Chromatics');
+            expect(session[3].cat).toBe('Double Stops');
         });
 
         it('should add variant property to each question', () => {
@@ -89,7 +89,7 @@ describe('sessionGenerator', () => {
             // Run multiple times to increase chance of getting VI-1
             for (let i = 0; i < 50; i++) {
                 const session = generateSession(history);
-                const doubleStopQ = session.find(q => q.cat === 'DoubleStops');
+                const doubleStopQ = session.find(q => q.cat === 'Double Stops');
                 if (doubleStopQ.id === 'VI-1') {
                     expect(doubleStopQ.variant).toBe('Slurred pairs + separate');
                     foundBrokenSteps = true;

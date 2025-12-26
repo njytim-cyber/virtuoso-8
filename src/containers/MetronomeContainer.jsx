@@ -41,7 +41,7 @@ export default function MetronomeContainer({ tempo, timeSig, isPlaying, onComple
             // Reset nextNoteTime to current time
             nextNoteTimeRef.current = audioCtxRef.current.currentTime + 0.05;
 
-            console.log('[Metronome] Starting with precision scheduler');
+            // console.log('[Metronome] Starting with precision scheduler');
 
             // Clean scheduler if exists
             if (timerIDRef.current) clearInterval(timerIDRef.current);

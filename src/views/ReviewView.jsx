@@ -1,4 +1,4 @@
-import { Star, Trophy, Target, TrendingUp, CheckCircle2, Music, Eye, Headphones, ArrowLeft, Share } from 'lucide-react';
+import { Star, Trophy, Target, TrendingUp, CheckCircle2, Music, Eye, Headphones, ArrowLeft, Share2 } from 'lucide-react';
 import { QUESTIONS } from '@data/questions';
 
 // Progress log categories (same as ProgressLogView)
@@ -170,24 +170,22 @@ Practice makes progress!`;
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 text-white">
+        <div className="min-h-screen bg-gray-900 pb-20 text-slate-300">
             {/* Header */}
-            <div className="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <div className="flex items-center">
-                        <button onClick={onBack} className="p-2 hover:bg-slate-700 rounded-full mr-3 transition-colors">
-                            <ArrowLeft size={20} className="text-slate-400" />
-                        </button>
-                        <h1 className="text-2xl font-bold">Progress Review</h1>
-                    </div>
-                    <button
-                        onClick={handleShare}
-                        className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-semibold transition-colors shadow-lg shadow-indigo-500/20"
-                    >
-                        <Share size={18} />
-                        <span>Share</span>
+            <div className="bg-gray-800/50 backdrop-blur sticky top-0 z-30 border-b border-gray-700 px-4 py-4 flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                    <button onClick={onBack} className="p-2 hover:bg-gray-700 rounded-full transition-colors text-gray-400 hover:text-white">
+                        <ArrowLeft size={24} />
                     </button>
+                    <h1 className="text-xl font-bold text-white">Performance Review</h1>
                 </div>
+                <button
+                    onClick={handleShare}
+                    className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors font-medium text-sm"
+                >
+                    <Share2 size={16} />
+                    <span>Share</span>
+                </button>
             </div>
 
             {/* Summary Stats Bar - Simplified */}
@@ -201,10 +199,7 @@ Practice makes progress!`;
                         <Target size={16} className="text-slate-400" />
                         <span className="text-slate-300">{attemptedQuestions}/{totalQuestions} Scales</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <CheckCircle2 size={16} className="text-green-400" />
-                        <span className="text-green-400">{masteredQuestions} Mastered</span>
-                    </div>
+                    {/* Mastered removed from here per request */}
                     <div className="flex items-center space-x-2">
                         <Trophy size={16} className="text-yellow-400" />
                         <span className="text-yellow-400">{avgScore} Avg</span>
@@ -219,7 +214,10 @@ Practice makes progress!`;
                     <div className="grid md:grid-cols-3 gap-4">
                         {PROGRESS_CATEGORIES.map(category => {
                             const Icon = category.icon;
-                            const stats = getProgressStats(category);
+                            // Calculate average stars
+                            const ratedItems = category.items.filter(item => progressLog[item.id] > 0);
+                            const totalStars = ratedItems.reduce((acc, item) => acc + (progressLog[item.id] || 0), 0);
+                            const avgStars = ratedItems.length > 0 ? (totalStars / ratedItems.length).toFixed(1) : 0;
                             const colors = colorClasses[category.color];
 
                             return (
@@ -229,9 +227,10 @@ Practice makes progress!`;
                                             <Icon size={18} className="text-white" />
                                             <h4 className="font-bold text-white">{category.title} <span className="text-white/60 text-sm font-normal ml-1">({category.marks} marks)</span></h4>
                                         </div>
-                                        <span className="text-white/80 text-sm">
-                                            {stats.rated}/{stats.total} rated
-                                        </span>
+                                        <div className="flex items-center space-x-1 bg-black/20 px-2 py-0.5 rounded text-white/90 text-sm">
+                                            <Star size={12} fill="currentColor" className="text-yellow-400" />
+                                            <span>{avgStars > 0 ? avgStars : '-'}</span>
+                                        </div>
                                     </div>
                                     <div className="space-y-1 py-2">
                                         {category.items.map(item => {

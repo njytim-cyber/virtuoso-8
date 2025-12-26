@@ -54,7 +54,8 @@ export default function AppContainerMock() {
             streaks: 0,
             lastLogin: new Date().toDateString(),
             totalPractice: 0,
-            tutorialSeen: false
+            tutorialSeen: false,
+            avatarIndex: 0 // Default avatar
         };
 
         setUserData(initialData);
@@ -108,6 +109,10 @@ export default function AppContainerMock() {
         setUserData(prev => ({ ...prev, name: newName }));
     };
 
+    const handleUpdateAvatar = (index) => {
+        setUserData(prev => ({ ...prev, avatarIndex: index }));
+    };
+
     const handleLogProgress = (entry) => {
         setProgressLog(prev => ({ ...prev, [entry.itemId]: entry.rating }));
     };
@@ -124,7 +129,7 @@ export default function AppContainerMock() {
                     case 'onboarding':
                         return <OnboardingView onSave={handleCreateProfile} />;
                     case 'dashboard':
-                        return <DashboardView userData={userData} history={history} progressLog={progressLog} onStart={handleStartSession} onReview={() => setView('review')} onLogProgress={() => setView('progressLog')} onUpdateName={handleUpdateName} />;
+                        return <DashboardView userData={userData} history={history} progressLog={progressLog} onStart={handleStartSession} onReview={() => setView('review')} onLogProgress={() => setView('progressLog')} onUpdateName={handleUpdateName} onUpdateAvatar={handleUpdateAvatar} />;
                     case 'progressLog':
                         return <ProgressLogView progressLog={progressLog} onBack={() => setView('dashboard')} onLogProgress={handleLogProgress} />;
                     case 'session':

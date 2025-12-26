@@ -21,8 +21,8 @@ describe('questions data', () => {
     it('should have correct category distribution', () => {
         const scales = QUESTIONS.filter(q => q.cat === 'Scales');
         const arpeggios = QUESTIONS.filter(q => q.cat === 'Arpeggios');
-        const misc = QUESTIONS.filter(q => q.cat === 'Misc');
-        const doubleStops = QUESTIONS.filter(q => q.cat === 'DoubleStops');
+        const misc = QUESTIONS.filter(q => q.cat === 'Dominants, Diminished and Chromatics');
+        const doubleStops = QUESTIONS.filter(q => q.cat === 'Double Stops');
 
         expect(scales.length).toBe(15);
         expect(arpeggios.length).toBe(10);

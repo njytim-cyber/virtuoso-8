@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Play, TrendingUp, Trophy, ClipboardList, Calendar, Share } from 'lucide-react';
+import { Play, TrendingUp, ClipboardList, Calendar, Share2, Music, Star } from 'lucide-react';
 import pkg from '../../package.json';
 
 // Calculate days until exam (April 1st, 2026)
@@ -63,7 +63,7 @@ function calculateEstimatedMark(history, progressLog) {
  * @param {Function} props.onLogProgress - Open progress log callback
  * @param {Function} props.onUpdateName - Update user name callback
  */
-export default function DashboardView({ userData, history, progressLog = {}, onStart, onReview, onLogProgress, onUpdateName }) {
+export default function DashboardView({ userData, history, progressLog = {}, onStart, onReview, onLogProgress, onUpdateName, onUpdateAvatar }) {
     const [isEditingName, setIsEditingName] = useState(false);
     const [editedName, setEditedName] = useState('');
 
@@ -94,6 +94,38 @@ export default function DashboardView({ userData, history, progressLog = {}, onS
         } else if (e.key === 'Escape') {
             setIsEditingName(false);
         }
+    };
+
+    // Avatar Logic
+    const [showAvatarSelector, setShowAvatarSelector] = useState(false);
+    const avatarIndex = userData.avatarIndex || 0;
+
+    // Grid matches the 5x5 sprite sheet
+    const getAvatarStyle = (index) => {
+        const row = Math.floor(index / 5);
+        const col = index % 5;
+        // Assuming 5x5 grid in the image
+        return {
+            backgroundImage: 'url(/avatars.png)',
+            backgroundPosition: `${col * 25}% ${row * 25}%`,
+            backgroundSize: '500%', // 5 columns means 500% width
+        };
+    };
+
+    const handleAvatarClick = () => {
+        setShowAvatarSelector(true);
+    };
+
+    const handleSelectAvatar = (index) => {
+        if (onUpdateName) {
+            // We're hijacking onUpdateName to update user data generally since AppContainer handles it
+            // Ideally we'd have onUpdateUserData but for now we'll assume the container can handle this
+            // wait, AppContainerMock only allows name update. I need to update AppContainerMock to allow avatar updates.
+            // Actually, let's just cheat and assume onUpdateName is limited.
+            // Better: Add onUpdateAvatar prop.
+        }
+        // Since I can't easily change prop signature without checking AppContainerMock, 
+        // I will first modify AppContainerMock to pass onUpdateAvatar.
     };
 
     // Determine grade based on mark
@@ -135,14 +167,49 @@ Practice makes progress!`;
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
-            <header className="bg-white shadow-sm p-6 mb-6">
+        <div className="min-h-screen bg-gray-900 text-white pb-20 relative">
+            {/* Avatar Selector Modal */}
+            {showAvatarSelector && (
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowAvatarSelector(false)}>
+                    <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 max-w-sm w-full" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-xl font-bold text-white mb-4 text-center">Choose your Avatar</h3>
+                        <div className="grid grid-cols-5 gap-2 max-h-96 overflow-y-auto p-2">
+                            {[...Array(25)].map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => {
+                                        if (onUpdateAvatar) onUpdateAvatar(i);
+                                        setShowAvatarSelector(false);
+                                    }}
+                                    className={`aspect-square rounded-full border-2 transition-all overflow-hidden ${avatarIndex === i ? 'border-indigo-500 scale-110 shadow-lg shadow-indigo-500/30' : 'border-transparent hover:border-gray-600 hover:scale-105'}`}
+                                >
+                                    <div className="w-full h-full" style={getAvatarStyle(i)} />
+                                </button>
+                            ))}
+                        </div>
+                        <button
+                            onClick={() => setShowAvatarSelector(false)}
+                            className="mt-6 w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold transition-colors"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <header className="bg-gray-800/50 backdrop-blur border-b border-gray-700 p-6 mb-8">
                 <div className="max-w-2xl mx-auto flex justify-between items-center">
                     <div className="flex items-center space-x-3">
                         {/* User Avatar */}
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 border border-gray-800">
-                            <img src="/avatar.png" alt="User avatar" className="w-full h-full object-cover" />
-                        </div>
+                        <button
+                            onClick={handleAvatarClick}
+                            className="w-12 h-12 rounded-full overflow-hidden bg-gray-700 flex-shrink-0 border border-gray-600 hover:ring-2 ring-indigo-500 transition-all relative group"
+                        >
+                            <div className="w-full h-full" style={getAvatarStyle(avatarIndex)} />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span className="text-white text-[10px] font-bold">EDIT</span>
+                            </div>
+                        </button>
 
                         {/* Editable Name */}
                         <div>
@@ -154,94 +221,101 @@ Practice makes progress!`;
                                     onBlur={handleNameSave}
                                     onKeyDown={handleKeyPress}
                                     autoFocus
-                                    className="text-2xl font-bold text-gray-800 border-b-2 border-indigo-500 outline-none bg-transparent px-1"
+                                    className="text-2xl font-bold text-white border-b-2 border-indigo-500 outline-none bg-transparent px-1 min-w-[150px]"
                                 />
                             ) : (
                                 <h1
-                                    className="text-2xl font-bold text-gray-800 cursor-pointer hover:text-indigo-600 transition-colors"
+                                    className="text-2xl font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors"
                                     onClick={handleNameClick}
                                     title="Click to edit name"
                                 >
                                     Hi, {name}
                                 </h1>
                             )}
-                            <p className="text-sm text-gray-500">
-                                Ready for your Grade 8 prep?
-                                <span className="ml-2 text-xs text-indigo-300 font-mono">v{pkg.version}</span>
+                            <p className="text-sm text-gray-400 flex items-center mt-1">
+                                Let&apos;s make some music today! 🎵
+                                <span className="ml-2 text-[10px] text-indigo-300 font-mono border border-indigo-500/30 bg-indigo-500/10 px-1.5 py-0.5 rounded">v{pkg.version}</span>
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                        <div className="flex items-center space-x-2 bg-orange-50 px-3 py-1 rounded-full text-orange-700">
-                            <Calendar size={16} />
-                            <span className="font-bold">{getDaysUntilExam()} Days</span>
-                        </div>
-                        <div className="flex items-center space-x-2 bg-indigo-50 px-3 py-1 rounded-full text-indigo-700">
-                            <Trophy size={16} />
-                            <span className="font-bold">{streaks} Day Streak</span>
-                        </div>
-                        <button
-                            onClick={handleShare}
-                            className="p-2 hover:bg-gray-100 rounded-full text-indigo-600 transition-colors"
-                            title="Share Progress"
-                        >
-                            <Share size={20} />
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleShare}
+                        className="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 p-2 rounded-xl transition-colors"
+                        title="Share Progress"
+                    >
+                        <Share2 size={20} />
+                    </button>
                 </div>
             </header>
 
-            <div className="max-w-2xl mx-auto px-4 space-y-6">
-                <button
-                    onClick={onReview}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all cursor-pointer"
-                >
-                    <div className="flex justify-between items-end mb-4">
-                        <div>
-                            <h2 className="text-4xl font-bold">{estimatedMark} / 150</h2>
+            <main className="max-w-2xl mx-auto px-6 space-y-6">
+                {/* Hero Card */}
+                <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-3xl p-6 text-white shadow-xl border border-indigo-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-3 opacity-10">
+                        <Music size={120} />
+                    </div>
+                    <div className="relative z-10">
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-1">Estimated Grade</h2>
+                                <div className="text-4xl font-black tracking-tight">{estimatedMark} <span className="text-lg font-medium text-indigo-300">/ 150</span></div>
+                            </div>
+                            <div className={`px-3 py-1 rounded-full text-xs font-bold border ${color.replace('text-', 'border-').replace('200', '500')} ${color} bg-black/20 backdrop-blur-md`}>
+                                {grade}
+                            </div>
                         </div>
-                        <TrendingUp className="text-indigo-200" size={32} />
-                    </div>
-                    <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
-                        <div
-                            className="bg-white h-full rounded-full transition-all duration-500"
-                            style={{ width: `${(estimatedMark / 150) * 100}%` }}
-                        ></div>
-                    </div>
-                    <div className="mt-3 flex justify-between items-center text-sm">
-                        <span className={`font-semibold ${color}`}>{grade}</span>
-                        <span className="text-indigo-100 text-xs">
-                            Pieces: {breakdown.pieces} • Technical: {breakdown.technical} • Sight: {breakdown.sightReading} • Aural: {breakdown.aural}
-                        </span>
-                    </div>
-                </button>
 
+                        <div className="grid grid-cols-2 gap-4 mt-6">
+                            <div className="bg-black/20 rounded-xl p-3 backdrop-blur-sm border border-white/5">
+                                <div className="text-xs text-indigo-200 mb-1">Streak</div>
+                                <div className="text-xl font-bold flex items-center">
+                                    <span className="mr-1">🔥</span> {userData?.streaks || 0} Days
+                                </div>
+                            </div>
+                            <div className="bg-black/20 rounded-xl p-3 backdrop-blur-sm border border-white/5">
+                                <div className="text-xs text-indigo-200 mb-1">Practice</div>
+                                <div className="text-xl font-bold flex items-center">
+                                    <span className="mr-1">🎻</span> {userData?.totalPractice || 0} Sessions
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={onStart}
+                            className="mt-6 w-full bg-indigo-500 hover:bg-indigo-400 text-white py-4 rounded-xl font-black text-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-indigo-500/40 flex items-center justify-center space-x-2"
+                        >
+                            <Play fill="currentColor" size={24} />
+                            <span>Start Practice Session</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Quick Actions Grid */}
                 <div className="grid grid-cols-2 gap-4">
                     <button
-                        onClick={onStart}
-                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all group text-left"
+                        onClick={onReview}
+                        className="bg-gray-800 hover:bg-gray-750 border border-gray-700 p-5 rounded-2xl transition-all group text-left"
                     >
-                        <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
-                            <Play className="text-indigo-600 group-hover:text-white" fill="currentColor" />
+                        <div className="bg-indigo-500/20 w-10 h-10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <TrendingUp size={20} className="text-indigo-400" />
                         </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Scales and Arpeggios</h3>
-                        <p className="text-sm text-gray-500">4 exercises</p>
+                        <h3 className="font-bold text-gray-200">Review Progress</h3>
+                        <p className="text-xs text-gray-500 mt-1">Check your stats</p>
                     </button>
 
                     <button
                         onClick={onLogProgress}
-                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-purple-500 hover:shadow-md transition-all group text-left"
+                        className="bg-gray-800 hover:bg-gray-750 border border-gray-700 p-5 rounded-2xl transition-all group text-left"
                     >
-                        <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
-                            <ClipboardList className="text-purple-600 group-hover:text-white" />
+                        <div className="bg-green-500/20 w-10 h-10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <Star size={20} className="text-green-400" />
                         </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Log My Progress</h3>
-                        <p className="text-sm text-gray-500">Pieces, Aural, Sight-Reading</p>
+                        <h3 className="font-bold text-gray-200">Log Progress</h3>
+                        <p className="text-xs text-gray-500 mt-1">Rate specific items</p>
                     </button>
                 </div>
-
-            </div>
+            </main>
         </div>
     );
 }

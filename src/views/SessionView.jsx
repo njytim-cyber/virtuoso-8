@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Play, Info, Volume2, Music, Star, Clock, Activity, ArrowLeft, ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
 import StarRating from '@components/StarRating';
 import MetronomeView from '@components/MetronomeView';
@@ -48,7 +48,7 @@ export default function SessionView({
     const [showTutorial, setShowTutorial] = useState(false);
     const [showExitConfirm, setShowExitConfirm] = useState(false);
     const [hasStartedMetronome, setHasStartedMetronome] = useState(false);
-    const [showCriteria, setShowCriteria] = useState(true); // Open by default
+    const [showCriteria, setShowCriteria] = useState(false); // Closed by default now
 
     // Wrap onStartCountIn to track that metronome was started
     const handleStartCountIn = () => {
@@ -57,7 +57,7 @@ export default function SessionView({
     };
 
     // TTS Effect
-    const speakAnnouncement = () => {
+    const speakAnnouncement = useCallback(() => {
         if (!currentQ) return;
         window.speechSynthesis.cancel();
         // Use variant for bowing, or map 'both' to 'Separate Bows' if variant missing
@@ -66,17 +66,21 @@ export default function SessionView({
 
         // Normalize for TTS pronunciation
         text = text.replace(/#/g, " Sharp");
-        text = text.replace(/\b([A-G])b\b/g, "$1 Flat");
+        // Robust flat detection: Matches A-G followed by 'b', if not followed by a lowercase letter (avoids 'Cab', 'Tab')
+        text = text.replace(/([A-G])b(?![a-z])/g, "$1 Flat");
         text = text.replace(/3rds/g, " Thirds");
         text = text.replace(/6ths/g, " Sixths");
-        text = text.replace(/\(2 Oct\)/g, "2 Octaves");
-        text = text.replace(/\(3 Oct\)/g, "3 Octaves");
-        text = text.replace(/\(1 Oct\)/g, "1 Octave");
+        text = text.replace(/7th/g, " Seventh");
+        text = text.replace(/\+/g, " and ");
+
+        // Remove parentheses around Octaves for cleaner speech
+        text = text.replace(/\((\d) Octaves?\)/g, "$1 Octaves");
+        text = text.replace(/\(1 Octave\)/g, "1 Octave");
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
-    };
+    }, [currentQ]);
 
     useEffect(() => {
         speakAnnouncement();
@@ -140,26 +144,27 @@ export default function SessionView({
                     </div>
                 )}
 
-                {/* Exit Confirmation Dialog */}
+                {/* Exit Confirmation Dialog - Playful Edition */}
                 {showExitConfirm && (
                     <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6">
-                        <div className="bg-white text-gray-900 p-6 rounded-2xl max-w-sm">
-                            <h3 className="text-xl font-bold mb-3">Exit Session?</h3>
-                            <p className="text-gray-600 mb-6">
-                                You&apos;ll lose your progress for this session if you go back now.
+                        <div className="bg-white text-gray-900 p-8 rounded-3xl max-w-sm text-center transform transition-all scale-100 shadow-2xl">
+                            <div className="mb-4 text-4xl">🎭</div>
+                            <h3 className="text-2xl font-black mb-3 text-indigo-900">Pause the Performance?</h3>
+                            <p className="text-gray-600 mb-8 leading-relaxed">
+                                You&apos;re in the flow! Leaving now means this session&apos;s progress won&apos;t be saved in your history.
                             </p>
-                            <div className="flex gap-3">
+                            <div className="flex flex-col gap-3">
                                 <button
                                     onClick={() => setShowExitConfirm(false)}
-                                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-semibold transition-colors"
+                                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-indigo-200"
                                 >
-                                    Stay
+                                    The Show Must Go On! 🎻
                                 </button>
                                 <button
                                     onClick={handleConfirmExit}
-                                    className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+                                    className="w-full bg-white hover:bg-gray-50 text-gray-400 hover:text-red-500 py-3 px-6 rounded-xl font-bold transition-colors text-sm"
                                 >
-                                    Leave
+                                    Exit Stage Left
                                 </button>
                             </div>
                         </div>
@@ -275,41 +280,55 @@ export default function SessionView({
                                         )}
                                     </div>
 
-                                    {/* Marking Criteria Panel */}
-                                    <div className="bg-gray-800/80 backdrop-blur-md rounded-xl border border-gray-700 overflow-hidden">
-                                        <button
-                                            onClick={() => setShowCriteria(!showCriteria)}
-                                            className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-700/50 transition-colors"
-                                        >
-                                            <div className="flex items-center space-x-2">
-                                                <HelpCircle size={18} className="text-indigo-400" />
-                                                <span className="font-medium text-gray-300 text-sm">How should I rate myself?</span>
-                                            </div>
-                                            {showCriteria ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
-                                        </button>
+                                    {/* Help Button */}
+                                    <button
+                                        onClick={() => setShowCriteria(true)}
+                                        className="w-full py-3 flex items-center justify-center space-x-2 text-gray-400 hover:text-white transition-colors border border-gray-700 rounded-xl hover:bg-gray-800"
+                                    >
+                                        <HelpCircle size={18} />
+                                        <span>How should I rate myself?</span>
+                                    </button>
 
-                                        {showCriteria && (
-                                            <div className="px-4 py-3 space-y-2 max-h-64 overflow-y-auto border-t border-gray-700">
-                                                <p className="text-xs text-gray-500 font-medium">{SCALES_CRITERIA.title}</p>
-                                                {SCALES_CRITERIA.grades.map((grade, idx) => (
-                                                    <div key={idx} className={`p-2 rounded-lg ${grade.stars >= 4 ? 'bg-green-900/30 border border-green-700/50' : grade.stars === 3 ? 'bg-yellow-900/30 border border-yellow-700/50' : 'bg-red-900/30 border border-red-700/50'}`}>
-                                                        <div className="flex items-center justify-between mb-1">
-                                                            <span className="font-semibold text-white text-sm">{grade.grade}</span>
-                                                            <div className="flex items-center space-x-2">
-                                                                <span className="text-xs text-gray-400">{grade.marks}</span>
-                                                                <span className="text-yellow-400">{'★'.repeat(grade.stars)}</span>
+                                    {/* Marking Criteria Modal */}
+                                    {showCriteria && (
+                                        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowCriteria(false)}>
+                                            <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h3 className="text-lg font-bold text-white">Rating Criteria</h3>
+                                                    <button onClick={() => setShowCriteria(false)} className="text-gray-400 hover:text-white">
+                                                        <span className="text-2xl">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div className="overflow-y-auto pr-2 space-y-3">
+                                                    <p className="text-sm text-gray-400 font-medium">{SCALES_CRITERIA.title}</p>
+                                                    {SCALES_CRITERIA.grades.map((grade, idx) => (
+                                                        <div key={idx} className={`p-3 rounded-lg ${grade.stars >= 4 ? 'bg-green-900/30 border border-green-700/50' : grade.stars === 3 ? 'bg-yellow-900/30 border border-yellow-700/50' : 'bg-red-900/30 border border-red-700/50'}`}>
+                                                            <div className="flex items-center justify-between mb-1">
+                                                                <span className="font-semibold text-white text-sm">{grade.grade}</span>
+                                                                <div className="flex items-center space-x-2">
+                                                                    <span className="text-xs text-gray-400">{grade.marks} marks</span>
+                                                                    <span className="text-yellow-400 flex">{'★'.repeat(grade.stars)}</span>
+                                                                </div>
                                                             </div>
+                                                            <ul className="text-xs text-gray-400 space-y-1 list-disc list-inside">
+                                                                {grade.criteria.map((c, i) => (
+                                                                    <li key={i}>{c}</li>
+                                                                ))}
+                                                            </ul>
                                                         </div>
-                                                        <ul className="text-xs text-gray-400 space-y-0.5">
-                                                            {grade.criteria.map((c, i) => (
-                                                                <li key={i}>• {c}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                ))}
+                                                    ))}
+                                                </div>
+
+                                                <button
+                                                    onClick={() => setShowCriteria(false)}
+                                                    className="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold transition-colors"
+                                                >
+                                                    Got it
+                                                </button>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
