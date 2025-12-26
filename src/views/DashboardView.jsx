@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Play, TrendingUp, Trophy, ClipboardList, Calendar } from 'lucide-react';
+import { Play, TrendingUp, Trophy, ClipboardList, Calendar, Share } from 'lucide-react';
 
 // Calculate days until exam (April 1st, 2026)
 const EXAM_DATE = new Date('2026-04-01T00:00:00');
@@ -105,6 +105,34 @@ export default function DashboardView({ userData, history, progressLog = {}, onS
 
     const { grade, color } = getGrade(estimatedMark);
 
+    const handleShare = async () => {
+        const text = `🎻 Virtuoso 8 Progress for ${name}
+
+Estimated Mark: ${estimatedMark}/150 (${grade})
+
+Breakdown:
+Pieces: ${breakdown.pieces}/90
+Technical: ${breakdown.technical}/21
+Sight-Reading: ${breakdown.sightReading}/21
+Aural: ${breakdown.aural}/18
+
+Practice makes progress!`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Virtuoso 8 Progress',
+                    text: text,
+                });
+            } catch (err) {
+                // Ignore
+            }
+        } else {
+            await navigator.clipboard.writeText(text);
+            alert('Progress summary copied to clipboard!');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
             <header className="bg-white shadow-sm p-6 mb-6">
@@ -149,6 +177,13 @@ export default function DashboardView({ userData, history, progressLog = {}, onS
                             <Trophy size={16} />
                             <span className="font-bold">{streaks} Day Streak</span>
                         </div>
+                        <button
+                            onClick={handleShare}
+                            className="p-2 hover:bg-gray-100 rounded-full text-indigo-600 transition-colors"
+                            title="Share Progress"
+                        >
+                            <Share size={20} />
+                        </button>
                     </div>
                 </div>
             </header>
