@@ -1,15 +1,91 @@
-import { RotateCcw, Star } from 'lucide-react';
+import { Star, Trophy, Target, TrendingUp, CheckCircle2, Music, Eye, Headphones, ArrowLeft } from 'lucide-react';
 import { QUESTIONS } from '@data/questions';
 
+// Progress log categories (same as ProgressLogView)
+const PROGRESS_CATEGORIES = [
+    {
+        id: 'pieces',
+        title: 'Pieces',
+        icon: Music,
+        color: 'indigo',
+        items: [
+            { id: 'piece_baroque', label: 'List A (Baroque/Classical)' },
+            { id: 'piece_romantic', label: 'List B (Romantic)' },
+            { id: 'piece_modern', label: 'List C (Modern)' },
+        ]
+    },
+    {
+        id: 'sight_reading',
+        title: 'Sight-Reading',
+        icon: Eye,
+        color: 'emerald',
+        items: [
+            { id: 'sr_grade6', label: 'Grade 6' },
+            { id: 'sr_grade7', label: 'Grade 7' },
+            { id: 'sr_grade8', label: 'Grade 8' },
+        ]
+    },
+    {
+        id: 'aural',
+        title: 'Aural Tests',
+        icon: Headphones,
+        color: 'purple',
+        items: [
+            { id: 'aural_8a', label: '8A: Cadences & Chords' },
+            { id: 'aural_8b', label: '8B: Sight-Singing' },
+            { id: 'aural_8c', label: '8C: Modulation' },
+            { id: 'aural_8d', label: '8D: Musical Features' },
+        ]
+    }
+];
+
 /**
- * Review view - displays all questions with attempt history
- * 
+ * Calculate estimated exam mark based on practice data
+ */
+function calculateEstimatedMark(history, progressLog) {
+    // Technical Work: 21 marks
+    const technicalRatings = history.map(h => h.score).filter(s => s > 0);
+    const avgTechnical = technicalRatings.length > 0
+        ? technicalRatings.reduce((a, b) => a + b, 0) / technicalRatings.length
+        : 0;
+    const technicalMark = Math.round((avgTechnical / 5) * 21);
+
+    // Pieces: 90 marks
+    const pieceIds = ['piece_baroque', 'piece_romantic', 'piece_modern'];
+    const pieceRatings = pieceIds.map(id => progressLog[id] || 0);
+    const avgPieces = pieceRatings.filter(r => r > 0).length > 0
+        ? pieceRatings.reduce((a, b) => a + b, 0) / pieceRatings.filter(r => r > 0).length
+        : 0;
+    const piecesMark = Math.round((avgPieces / 5) * 90);
+
+    // Sight-Reading: 21 marks
+    const srIds = ['sr_grade6', 'sr_grade7', 'sr_grade8'];
+    const srRatings = srIds.map(id => progressLog[id] || 0);
+    const avgSR = srRatings.filter(r => r > 0).length > 0
+        ? srRatings.reduce((a, b) => a + b, 0) / srRatings.filter(r => r > 0).length
+        : 0;
+    const sightReadingMark = Math.round((avgSR / 5) * 21);
+
+    // Aural: 18 marks
+    const auralIds = ['aural_8a', 'aural_8b', 'aural_8c', 'aural_8d'];
+    const auralRatings = auralIds.map(id => progressLog[id] || 0);
+    const avgAural = auralRatings.filter(r => r > 0).length > 0
+        ? auralRatings.reduce((a, b) => a + b, 0) / auralRatings.filter(r => r > 0).length
+        : 0;
+    const auralMark = Math.round((avgAural / 5) * 18);
+
+    return piecesMark + technicalMark + sightReadingMark + auralMark;
+}
+
+/** 
  * @param {Object} props
  * @param {Array} props.history - Practice history entries
+ * @param {Object} props.progressLog - Progress log ratings
  * @param {Function} props.onBack - Return to dashboard callback
  */
-export default function ReviewView({ history, onBack }) {
+export default function ReviewView({ history, progressLog = {}, onBack }) {
     const categories = ['Scales', 'Arpeggios', 'Misc', 'DoubleStops'];
+    const estimatedMark = calculateEstimatedMark(history, progressLog);
 
     const getStats = (qId) => {
         const attempts = history.filter(h => h.questionId === qId);
@@ -22,47 +98,211 @@ export default function ReviewView({ history, onBack }) {
         };
     };
 
+    // Calculate overall stats
+    const totalQuestions = QUESTIONS.length;
+    const attemptedQuestions = new Set(history.map(h => h.questionId)).size;
+    const masteredQuestions = [...new Set(history.map(h => h.questionId))].filter(qId => {
+        const stats = getStats(qId);
+        return stats.last >= 4; // 4 or 5 stars = mastered
+    }).length;
+    const totalAttempts = history.length;
+    const avgScore = totalAttempts > 0
+        ? (history.reduce((acc, h) => acc + h.score, 0) / totalAttempts).toFixed(1)
+        : 0;
+
+    // Category stats for scales/arpeggios
+    const getCategoryStats = (cat) => {
+        const catQuestions = QUESTIONS.filter(q => q.cat === cat);
+        const attempted = catQuestions.filter(q => getStats(q.id).count > 0).length;
+        const mastered = catQuestions.filter(q => getStats(q.id).last >= 4).length;
+        return { total: catQuestions.length, attempted, mastered };
+    };
+
+    // Progress log stats
+    const getProgressStats = (category) => {
+        const ratedItems = category.items.filter(item => progressLog[item.id] > 0);
+        const masteredItems = category.items.filter(item => progressLog[item.id] >= 4);
+        return {
+            rated: ratedItems.length,
+            total: category.items.length,
+            mastered: masteredItems.length
+        };
+    };
+
+    const colorClasses = {
+        indigo: { bg: 'bg-indigo-600', border: 'border-indigo-500', text: 'text-indigo-400' },
+        emerald: { bg: 'bg-emerald-600', border: 'border-emerald-500', text: 'text-emerald-400' },
+        purple: { bg: 'bg-purple-600', border: 'border-purple-500', text: 'text-purple-400' },
+    };
+
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="bg-white shadow-sm p-4 sticky top-0 z-10 flex items-center">
-                <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full mr-2">
-                    <RotateCcw size={20} className="text-gray-600" />
-                </button>
-                <h2 className="font-bold text-lg text-gray-800">Progress Review</h2>
+        <div className="min-h-screen bg-slate-900 text-white">
+            {/* Header */}
+            <div className="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-10">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    <div className="flex items-center">
+                        <button onClick={onBack} className="p-2 hover:bg-slate-700 rounded-full mr-3 transition-colors">
+                            <ArrowLeft size={20} className="text-slate-400" />
+                        </button>
+                        <h2 className="font-bold text-xl">Progress Review</h2>
+                    </div>
+                </div>
             </div>
 
-            <div className="max-w-2xl mx-auto p-4 space-y-8">
-                {categories.map(cat => (
-                    <div key={cat} className="space-y-3">
-                        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider pl-2">{cat}</h3>
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                            {QUESTIONS.filter(q => q.cat === cat).map((q) => {
-                                const stats = getStats(q.id);
-                                const isAttempted = stats.count > 0;
-                                return (
-                                    <div key={q.id} className={`p-4 border-b border-gray-100 last:border-0 flex justify-between items-center ${!isAttempted ? 'opacity-60 bg-gray-50' : ''}`}>
-                                        <div className="flex-1">
-                                            <p className={`font-medium ${isAttempted ? 'text-gray-900' : 'text-gray-500'}`}>{q.title}</p>
-                                            <p className="text-xs text-gray-400">{q.time} • {q.tempo} BPM</p>
+            {/* Summary Stats Bar - Simplified */}
+            <div className="bg-slate-800 border-b border-slate-700 px-4 py-3">
+                <div className="max-w-7xl mx-auto flex flex-wrap justify-center gap-6 text-sm">
+                    <div className="flex items-center space-x-2">
+                        <TrendingUp size={16} className="text-indigo-400" />
+                        <span className="text-indigo-400 font-bold">{estimatedMark}/150</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Target size={16} className="text-slate-400" />
+                        <span className="text-slate-300">{attemptedQuestions}/{totalQuestions} Scales</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <CheckCircle2 size={16} className="text-green-400" />
+                        <span className="text-green-400">{masteredQuestions} Mastered</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Trophy size={16} className="text-yellow-400" />
+                        <span className="text-yellow-400">{avgScore} Avg</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto p-4 space-y-6">
+                {/* Progress Log Sections */}
+                <div>
+                    <h3 className="text-lg font-semibold text-slate-300 mb-3">Exam Components</h3>
+                    <div className="grid md:grid-cols-3 gap-4">
+                        {PROGRESS_CATEGORIES.map(category => {
+                            const Icon = category.icon;
+                            const stats = getProgressStats(category);
+                            const colors = colorClasses[category.color];
+
+                            return (
+                                <div key={category.id} className={`bg-slate-800 rounded-xl overflow-hidden border ${colors.border}`}>
+                                    <div className={`${colors.bg} px-4 py-3 flex items-center justify-between`}>
+                                        <div className="flex items-center space-x-2">
+                                            <Icon size={18} className="text-white" />
+                                            <h4 className="font-bold text-white">{category.title}</h4>
                                         </div>
-                                        <div className="flex items-center space-x-4">
-                                            {isAttempted ? (
-                                                <div className="text-right">
-                                                    <div className="flex items-center text-yellow-500">
-                                                        <span className="font-bold mr-1">{stats.last}</span> <Star size={12} fill="currentColor" />
-                                                    </div>
-                                                    <div className="text-xs text-gray-400">{stats.count} tries</div>
+                                        <span className="text-white/80 text-sm">
+                                            {stats.rated}/{stats.total} rated
+                                        </span>
+                                    </div>
+                                    <div className="space-y-1 py-2">
+                                        {category.items.map(item => {
+                                            const rating = progressLog[item.id] || 0;
+                                            const isMastered = rating >= 4;
+
+                                            return (
+                                                <div
+                                                    key={item.id}
+                                                    className={`px-4 py-2.5 flex justify-between items-center ${isMastered ? 'bg-green-500/5' : rating === 0 ? 'opacity-50' : ''}`}
+                                                >
+                                                    <span className={`text-sm font-medium ${isMastered ? 'text-green-400' : rating > 0 ? 'text-white' : 'text-slate-500'}`}>
+                                                        {item.label}
+                                                    </span>
+                                                    {rating > 0 ? (
+                                                        <div className="flex items-center">
+                                                            {[1, 2, 3, 4, 5].map(s => (
+                                                                <Star
+                                                                    key={s}
+                                                                    size={10}
+                                                                    className={s <= rating ? 'text-yellow-400' : 'text-slate-600'}
+                                                                    fill={s <= rating ? 'currentColor' : 'none'}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-xs text-slate-600">—</span>
+                                                    )}
                                                 </div>
-                                            ) : (
-                                                <span className="text-xs text-gray-400 px-2 py-1 bg-gray-200 rounded">Untouched</span>
-                                            )}
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Technical Work (Scales & Arpeggios) */}
+                <div>
+                    <h3 className="text-lg font-semibold text-slate-300 mb-3">Technical Work</h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {categories.map(cat => {
+                            const catStats = getCategoryStats(cat);
+                            const catQuestions = QUESTIONS.filter(q => q.cat === cat);
+
+                            return (
+                                <div key={cat} className="bg-slate-800 rounded-2xl overflow-hidden border border-slate-700">
+                                    {/* Category Header */}
+                                    <div className="bg-slate-700/50 px-4 py-3 flex items-center justify-between">
+                                        <h3 className="font-bold text-lg">{cat}</h3>
+                                        <div className="flex items-center space-x-3 text-sm">
+                                            <span className="text-slate-400">
+                                                {catStats.attempted}/{catStats.total}
+                                            </span>
+                                            <span className="bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full text-xs">
+                                                {catStats.mastered} mastered
+                                            </span>
                                         </div>
                                     </div>
-                                );
-                            })}
-                        </div>
+
+                                    {/* Questions List - Compact */}
+                                    <div className="divide-y divide-slate-700/50 max-h-[300px] overflow-y-auto">
+                                        {catQuestions.map((q) => {
+                                            const stats = getStats(q.id);
+                                            const isAttempted = stats.count > 0;
+                                            const isMastered = stats.last >= 4;
+
+                                            return (
+                                                <div
+                                                    key={q.id}
+                                                    className={`px-4 py-2.5 flex justify-between items-center ${isMastered ? 'bg-green-500/5' :
+                                                        !isAttempted ? 'opacity-50' : ''
+                                                        }`}
+                                                >
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className={`font-medium text-sm truncate ${isMastered ? 'text-green-400' :
+                                                            isAttempted ? 'text-white' : 'text-slate-500'
+                                                            }`}>
+                                                            {q.title}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2 ml-3">
+                                                        {isAttempted ? (
+                                                            <>
+                                                                <div className="flex items-center">
+                                                                    {[1, 2, 3, 4, 5].map(s => (
+                                                                        <Star
+                                                                            key={s}
+                                                                            size={10}
+                                                                            className={s <= stats.last ? 'text-yellow-400' : 'text-slate-600'}
+                                                                            fill={s <= stats.last ? 'currentColor' : 'none'}
+                                                                        />
+                                                                    ))}
+                                                                </div>
+                                                                <span className="text-xs text-slate-500 w-8 text-right">
+                                                                    ×{stats.count}
+                                                                </span>
+                                                            </>
+                                                        ) : (
+                                                            <span className="text-xs text-slate-600">—</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
-                ))}
+                </div>
             </div>
         </div>
     );

@@ -1,87 +1,95 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
- * Simple Metronome Container - cycles through beats 1-4
+ * Looping Metronome Container - cycles continuously until stopped
  * 
  * @param {Object} props
  * @param {number} props.tempo - BPM
  * @param {string} props.timeSig - Time signature ('4/4', '6/8', '9/8')
  * @param {boolean} props.isPlaying - Play state
- * @param {Function} props.onComplete - Callback when count-in completes
+ * @param {Function} props.onComplete - Not used (loops forever)
  * @param {Function} props.onBeatChange - Callback with current beat number (1-4)
  */
 export default function MetronomeContainer({ tempo, timeSig, isPlaying, onComplete, onBeatChange }) {
-    const [currentBeat, setCurrentBeat] = useState(1);
+    const timerRef = useRef(null);
+    const beatRef = useRef(1);
 
     useEffect(() => {
+        // Only run when isPlaying is true
         if (!isPlaying) {
-            setCurrentBeat(1);
-            onBeatChange(1);
+            // Clean up timer when stopped
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
             return;
         }
 
-        // Calculate number of beats
-        let totalBeats = 4;
-        if (timeSig === '9/8') totalBeats = 3;
-        else if (timeSig === '6/8') totalBeats = 6;
+        // Calculate number of beats per bar
+        let beatsPerBar = 4;
+        if (timeSig === '9/8') beatsPerBar = 3;
+        else if (timeSig === '6/8') beatsPerBar = 6;
 
         // Calculate interval in milliseconds
-        const interval = (60000 / tempo); // ms per beat
+        const intervalMs = 60000 / tempo;
 
-        let beat = 1;
-        let count = 0;
+        // Reset beat counter
+        beatRef.current = 1;
 
-        // Initialize
-        console.log('[Metronome] Starting at beat 1');
-        onBeatChange(1);
+        console.log('[Metronome] Starting loop with', beatsPerBar, 'beats at', tempo, 'BPM');
 
         // Play click sound
         const playClick = (isFirstBeat) => {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
 
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
 
-            osc.frequency.value = isFirstBeat ? 800 : 400;
-            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+                osc.frequency.value = isFirstBeat ? 800 : 400;
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
 
-            osc.start(audioCtx.currentTime);
-            osc.stop(audioCtx.currentTime + 0.1);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.1);
+            } catch (e) {
+                console.warn('[Metronome] Audio error:', e);
+            }
         };
 
-        // Beat timer
-        const timer = setInterval(() => {
-            count++;
+        // Play first beat immediately
+        playClick(true);
+        onBeatChange(1);
+        console.log('[Metronome] Beat: 1');
 
-            if (count > totalBeats) {
-                clearInterval(timer);
-                onComplete();
-                console.log('[Metronome] Complete!');
-                return;
+        // Set up interval for continuous looping
+        timerRef.current = setInterval(() => {
+            // Move to next beat
+            beatRef.current++;
+
+            // Wrap around to 1 after reaching max beats
+            if (beatRef.current > beatsPerBar) {
+                beatRef.current = 1;
             }
 
-            // Play sound
-            playClick(beat === 1);
+            // Play sound and update UI
+            playClick(beatRef.current === 1);
+            console.log('[Metronome] Beat:', beatRef.current);
+            onBeatChange(beatRef.current);
 
-            // Update UI
-            console.log('[Metronome] Beat:', beat);
-            onBeatChange(beat);
-            setCurrentBeat(beat);
+        }, intervalMs);
 
-            // Increment beat (cycle 1-4 or 1-6 or 1-3)
-            beat++;
-            if (beat > totalBeats) {
-                beat = 1;
-            }
-        }, interval);
-
+        // Cleanup when stopped
         return () => {
-            clearInterval(timer);
-            console.log('[Metronome] Cleaned up');
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+                console.log('[Metronome] Stopped');
+            }
         };
-    }, [isPlaying, tempo, timeSig, onComplete, onBeatChange]);
+    }, [isPlaying, tempo, timeSig]);
 
     return null; // Logic-only component
 }

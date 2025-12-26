@@ -23,6 +23,10 @@ export default function SessionContainer({ queue, index, onRate, userData, histo
         setIsPlayingMetronome(true);
     };
 
+    const stopMetronome = () => {
+        setIsPlayingMetronome(false);
+    };
+
     const handleCountInComplete = () => {
         setIsPlayingMetronome(false);
     };
@@ -49,6 +53,7 @@ export default function SessionContainer({ queue, index, onRate, userData, histo
                 metronomeCount={metronomeCount}
                 isPlayingMetronome={isPlayingMetronome}
                 onStartCountIn={startCountIn}
+                onStopMetronome={stopMetronome}
                 onBack={onBack}
             />
         </>

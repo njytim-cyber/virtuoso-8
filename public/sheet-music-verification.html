@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheet Music Verification Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        h1 {
+            text-align: center;
+            color: #818cf8;
+        }
+        .instructions {
+            background: #2d2d44;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #2d2d44;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        .card.error {
+            border-color: #ef4444;
+        }
+        .card-header {
+            padding: 15px;
+            background: #3d3d5c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .question-id {
+            font-weight: bold;
+            color: #818cf8;
+            font-size: 1.2em;
+        }
+        .expected-title {
+            color: #a5b4fc;
+        }
+        .card-body {
+            padding: 10px;
+        }
+        .card-body img {
+            width: 100%;
+            height: auto;
+            background: white;
+            border-radius: 5px;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-correct {
+            background: #22c55e;
+            color: white;
+        }
+        .btn-wrong {
+            background: #ef4444;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .file-missing {
+            background: #ef4444;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        .summary {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3d3d5c;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .summary-count {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .correct { color: #22c55e; }
+        .wrong { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <h1>🎻 Sheet Music Verification Report</h1>
+    
+    <div class="instructions">
+        <h3>Instructions:</h3>
+        <p>For each card below, verify that the sheet music image matches the expected scale/arpeggio title.</p>
+        <p>Look for the scale name written on the sheet music (usually at the start of the first line).</p>
+        <p>Click ✓ Correct or ✗ Wrong to mark each one.</p>
+    </div>
+    
+    <div class="grid">
+
+        <div class="card" id="card-I-1" data-qid="I-1">
+            <div class="card-header">
+                <span class="question-id">I-1</span>
+                <span class="expected-title">Expected: Ab Major Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_1.jpg" alt="Ab Major Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-1')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-1')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-2" data-qid="I-2">
+            <div class="card-header">
+                <span class="question-id">I-2</span>
+                <span class="expected-title">Expected: G# Minor Melodic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_2.jpg" alt="G# Minor Melodic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-2')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-2')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-3" data-qid="I-3">
+            <div class="card-header">
+                <span class="question-id">I-3</span>
+                <span class="expected-title">Expected: G# Minor Harmonic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_3.jpg" alt="G# Minor Harmonic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-3')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-3')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-4" data-qid="I-4">
+            <div class="card-header">
+                <span class="question-id">I-4</span>
+                <span class="expected-title">Expected: C Major Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_4.jpg" alt="C Major Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-4')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-4')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-5" data-qid="I-5">
+            <div class="card-header">
+                <span class="question-id">I-5</span>
+                <span class="expected-title">Expected: C Minor Melodic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_5.jpg" alt="C Minor Melodic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-5')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-5')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-6" data-qid="I-6">
+            <div class="card-header">
+                <span class="question-id">I-6</span>
+                <span class="expected-title">Expected: C Minor Harmonic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_6.jpg" alt="C Minor Harmonic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-6')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-6')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-7" data-qid="I-7">
+            <div class="card-header">
+                <span class="question-id">I-7</span>
+                <span class="expected-title">Expected: Db Major Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_7.jpg" alt="Db Major Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-7')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-7')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-8" data-qid="I-8">
+            <div class="card-header">
+                <span class="question-id">I-8</span>
+                <span class="expected-title">Expected: C# Minor Melodic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_8.jpg" alt="C# Minor Melodic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-8')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-8')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-9" data-qid="I-9">
+            <div class="card-header">
+                <span class="question-id">I-9</span>
+                <span class="expected-title">Expected: C# Minor Harmonic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_9.jpg" alt="C# Minor Harmonic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-9')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-9')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-10" data-qid="I-10">
+            <div class="card-header">
+                <span class="question-id">I-10</span>
+                <span class="expected-title">Expected: Eb Major Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_10.jpg" alt="Eb Major Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-10')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-10')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-11" data-qid="I-11">
+            <div class="card-header">
+                <span class="question-id">I-11</span>
+                <span class="expected-title">Expected: Eb Minor Melodic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_11.jpg" alt="Eb Minor Melodic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-11')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-11')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-12" data-qid="I-12">
+            <div class="card-header">
+                <span class="question-id">I-12</span>
+                <span class="expected-title">Expected: Eb Minor Harmonic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_12.jpg" alt="Eb Minor Harmonic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-12')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-12')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-13" data-qid="I-13">
+            <div class="card-header">
+                <span class="question-id">I-13</span>
+                <span class="expected-title">Expected: E Major Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_13.jpg" alt="E Major Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-13')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-13')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-14" data-qid="I-14">
+            <div class="card-header">
+                <span class="question-id">I-14</span>
+                <span class="expected-title">Expected: E Minor Melodic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_14.jpg" alt="E Minor Melodic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-14')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-14')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-I-15" data-qid="I-15">
+            <div class="card-header">
+                <span class="question-id">I-15</span>
+                <span class="expected-title">Expected: E Minor Harmonic Scale</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/i_15.jpg" alt="E Minor Harmonic Scale">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('I-15')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('I-15')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-1" data-qid="II-1">
+            <div class="card-header">
+                <span class="question-id">II-1</span>
+                <span class="expected-title">Expected: Ab Major Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_1.jpg" alt="Ab Major Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-1')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-1')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-2" data-qid="II-2">
+            <div class="card-header">
+                <span class="question-id">II-2</span>
+                <span class="expected-title">Expected: G# Minor Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_2.jpg" alt="G# Minor Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-2')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-2')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-3" data-qid="II-3">
+            <div class="card-header">
+                <span class="question-id">II-3</span>
+                <span class="expected-title">Expected: C Major Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_3.jpg" alt="C Major Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-3')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-3')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-4" data-qid="II-4">
+            <div class="card-header">
+                <span class="question-id">II-4</span>
+                <span class="expected-title">Expected: C Minor Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_4.jpg" alt="C Minor Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-4')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-4')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-5" data-qid="II-5">
+            <div class="card-header">
+                <span class="question-id">II-5</span>
+                <span class="expected-title">Expected: Db Major Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_5.jpg" alt="Db Major Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-5')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-5')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-6" data-qid="II-6">
+            <div class="card-header">
+                <span class="question-id">II-6</span>
+                <span class="expected-title">Expected: C# Minor Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_6.jpg" alt="C# Minor Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-6')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-6')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-7" data-qid="II-7">
+            <div class="card-header">
+                <span class="question-id">II-7</span>
+                <span class="expected-title">Expected: Eb Major Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_7.jpg" alt="Eb Major Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-7')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-7')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-8" data-qid="II-8">
+            <div class="card-header">
+                <span class="question-id">II-8</span>
+                <span class="expected-title">Expected: Eb Minor Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_8.jpg" alt="Eb Minor Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-8')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-8')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-9" data-qid="II-9">
+            <div class="card-header">
+                <span class="question-id">II-9</span>
+                <span class="expected-title">Expected: E Major Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_9.jpg" alt="E Major Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-9')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-9')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-II-10" data-qid="II-10">
+            <div class="card-header">
+                <span class="question-id">II-10</span>
+                <span class="expected-title">Expected: E Minor Arpeggio</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/ii_10.jpg" alt="E Minor Arpeggio">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('II-10')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('II-10')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-III-1" data-qid="III-1">
+            <div class="card-header">
+                <span class="question-id">III-1</span>
+                <span class="expected-title">Expected: Dom 7th in Db</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/iii_1.jpg" alt="Dom 7th in Db">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('III-1')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('III-1')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-III-2" data-qid="III-2">
+            <div class="card-header">
+                <span class="question-id">III-2</span>
+                <span class="expected-title">Expected: Dom 7th in F</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/iii_2.jpg" alt="Dom 7th in F">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('III-2')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('III-2')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-III-3" data-qid="III-3">
+            <div class="card-header">
+                <span class="question-id">III-3</span>
+                <span class="expected-title">Expected: Dom 7th in Ab</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/iii_3.jpg" alt="Dom 7th in Ab">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('III-3')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('III-3')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-III-4" data-qid="III-4">
+            <div class="card-header">
+                <span class="question-id">III-4</span>
+                <span class="expected-title">Expected: Dom 7th in A</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/iii_4.jpg" alt="Dom 7th in A">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('III-4')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('III-4')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-IV-1" data-qid="IV-1">
+            <div class="card-header">
+                <span class="question-id">IV-1</span>
+                <span class="expected-title">Expected: Dim 7th on C</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/iv_1.jpg" alt="Dim 7th on C">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('IV-1')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('IV-1')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-IV-2" data-qid="IV-2">
+            <div class="card-header">
+                <span class="question-id">IV-2</span>
+                <span class="expected-title">Expected: Dim 7th on Eb</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/iv_2.jpg" alt="Dim 7th on Eb">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('IV-2')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('IV-2')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-IV-3" data-qid="IV-3">
+            <div class="card-header">
+                <span class="question-id">IV-3</span>
+                <span class="expected-title">Expected: Dim 7th on E</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/iv_3.jpg" alt="Dim 7th on E">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('IV-3')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('IV-3')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-IV-4" data-qid="IV-4">
+            <div class="card-header">
+                <span class="question-id">IV-4</span>
+                <span class="expected-title">Expected: Dim 7th on Ab</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/iv_4.jpg" alt="Dim 7th on Ab">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('IV-4')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('IV-4')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-V-1" data-qid="V-1">
+            <div class="card-header">
+                <span class="question-id">V-1</span>
+                <span class="expected-title">Expected: Chromatic on C</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/v_1.jpg" alt="Chromatic on C">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('V-1')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('V-1')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-V-2" data-qid="V-2">
+            <div class="card-header">
+                <span class="question-id">V-2</span>
+                <span class="expected-title">Expected: Chromatic on Eb</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/v_2.jpg" alt="Chromatic on Eb">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('V-2')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('V-2')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-V-3" data-qid="V-3">
+            <div class="card-header">
+                <span class="question-id">V-3</span>
+                <span class="expected-title">Expected: Chromatic on E</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/v_3.jpg" alt="Chromatic on E">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('V-3')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('V-3')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-V-4" data-qid="V-4">
+            <div class="card-header">
+                <span class="question-id">V-4</span>
+                <span class="expected-title">Expected: Chromatic on Ab</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/v_4.jpg" alt="Chromatic on Ab">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('V-4')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('V-4')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-VI-1" data-qid="VI-1">
+            <div class="card-header">
+                <span class="question-id">VI-1</span>
+                <span class="expected-title">Expected: Double Stop 3rds in Bb</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/vi_1.jpg" alt="Double Stop 3rds in Bb">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('VI-1')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('VI-1')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-VI-5" data-qid="VI-5">
+            <div class="card-header">
+                <span class="question-id">VI-5</span>
+                <span class="expected-title">Expected: Double Stop Octaves in D</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/vi_5.jpg" alt="Double Stop Octaves in D">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('VI-5')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('VI-5')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-VI-6" data-qid="VI-6">
+            <div class="card-header">
+                <span class="question-id">VI-6</span>
+                <span class="expected-title">Expected: Double Stop Octaves in Gm Melodic</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/vi_6.jpg" alt="Double Stop Octaves in Gm Melodic">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('VI-6')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('VI-6')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-VI-7" data-qid="VI-7">
+            <div class="card-header">
+                <span class="question-id">VI-7</span>
+                <span class="expected-title">Expected: Double Stop Octaves in Gm Harmonic</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/vi_7.jpg" alt="Double Stop Octaves in Gm Harmonic">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('VI-7')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('VI-7')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-VI-8" data-qid="VI-8">
+            <div class="card-header">
+                <span class="question-id">VI-8</span>
+                <span class="expected-title">Expected: Double Stop 6ths in Eb</span>
+            </div>
+            <div class="card-body">
+                <img src="/sheet-music/cropped/vi_8.jpg" alt="Double Stop 6ths in Eb">
+                <div class="status">
+                    <button class="btn btn-correct" onclick="markCorrect('VI-8')">✓ Correct</button>
+                    <button class="btn btn-wrong" onclick="markWrong('VI-8')">✗ Wrong</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="summary">
+        <div>Verified: <span id="verified-count" class="summary-count">0</span> / 42</div>
+        <div><span class="correct">✓</span> <span id="correct-count">0</span> | <span class="wrong">✗</span> <span id="wrong-count">0</span></div>
+    </div>
+    
+    <script>
+        const results = {};
+        
+        function updateSummary() {
+            const correct = Object.values(results).filter(r => r === 'correct').length;
+            const wrong = Object.values(results).filter(r => r === 'wrong').length;
+            document.getElementById('verified-count').textContent = Object.keys(results).length;
+            document.getElementById('correct-count').textContent = correct;
+            document.getElementById('wrong-count').textContent = wrong;
+        }
+        
+        function markCorrect(qid) {
+            results[qid] = 'correct';
+            const card = document.getElementById('card-' + qid);
+            card.style.borderColor = '#22c55e';
+            updateSummary();
+        }
+        
+        function markWrong(qid) {
+            results[qid] = 'wrong';
+            const card = document.getElementById('card-' + qid);
+            card.style.borderColor = '#ef4444';
+            updateSummary();
+            alert('Please note: ' + qid + ' is marked as WRONG. The page mapping needs to be corrected.');
+        }
+    </script>
+</body>
+</html>

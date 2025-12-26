@@ -1,6 +1,54 @@
 import { useState, useMemo } from 'react';
-import { Play, BarChart2, TrendingUp, Trophy, User } from 'lucide-react';
-import BALANCE from '@data/balance.json';
+import { Play, TrendingUp, Trophy, ClipboardList, Calendar } from 'lucide-react';
+
+// Calculate days until exam (April 1st, 2026)
+const EXAM_DATE = new Date('2026-04-01T00:00:00');
+function getDaysUntilExam() {
+    const now = new Date();
+    const diff = EXAM_DATE - now;
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
+/**
+ * Calculate estimated exam mark based on practice data
+ * Exam breakdown: Pieces (90), Technical (21), Sight-Reading (21), Aural (18) = 150 total
+ */
+function calculateEstimatedMark(history, progressLog) {
+    // Technical Work: 21 marks - based on scales/arpeggios practice (history)
+    // Average rating (1-5) maps to 0-21 marks
+    const technicalRatings = history.map(h => h.score).filter(s => s > 0);
+    const avgTechnical = technicalRatings.length > 0
+        ? technicalRatings.reduce((a, b) => a + b, 0) / technicalRatings.length
+        : 0;
+    const technicalMark = Math.round((avgTechnical / 5) * 21);
+
+    // Pieces: 90 marks (3 pieces × 30 marks each)
+    const pieceIds = ['piece_baroque', 'piece_romantic', 'piece_modern'];
+    const pieceRatings = pieceIds.map(id => progressLog[id] || 0);
+    const pieceMark = pieceRatings.reduce((sum, rating) => sum + Math.round((rating / 5) * 30), 0);
+
+    // Sight-Reading: 21 marks - average of 3 grades
+    const srIds = ['sr_grade6', 'sr_grade7', 'sr_grade8'];
+    const srRatings = srIds.map(id => progressLog[id] || 0).filter(r => r > 0);
+    const avgSR = srRatings.length > 0 ? srRatings.reduce((a, b) => a + b, 0) / srRatings.length : 0;
+    const sightReadingMark = Math.round((avgSR / 5) * 21);
+
+    // Aural: 18 marks - average of 4 tests
+    const auralIds = ['aural_8a', 'aural_8b', 'aural_8c', 'aural_8d'];
+    const auralRatings = auralIds.map(id => progressLog[id] || 0).filter(r => r > 0);
+    const avgAural = auralRatings.length > 0 ? auralRatings.reduce((a, b) => a + b, 0) / auralRatings.length : 0;
+    const auralMark = Math.round((avgAural / 5) * 18);
+
+    return {
+        total: technicalMark + pieceMark + sightReadingMark + auralMark,
+        breakdown: {
+            pieces: pieceMark,
+            technical: technicalMark,
+            sightReading: sightReadingMark,
+            aural: auralMark
+        }
+    };
+}
 
 /**
  * Dashboard view - main navigation and progress display
@@ -8,22 +56,21 @@ import BALANCE from '@data/balance.json';
  * @param {Object} props
  * @param {Object} props.userData - User profile data
  * @param {Array} props.history - Practice history entries
+ * @param {Object} props.progressLog - Progress log ratings
  * @param {Function} props.onStart - Start session callback
  * @param {Function} props.onReview - Open review callback
+ * @param {Function} props.onLogProgress - Open progress log callback
  * @param {Function} props.onUpdateName - Update user name callback
  */
-export default function DashboardView({ userData, history, onStart, onReview, onUpdateName }) {
+export default function DashboardView({ userData, history, progressLog = {}, onStart, onReview, onLogProgress, onUpdateName }) {
     const [isEditingName, setIsEditingName] = useState(false);
     const [editedName, setEditedName] = useState('');
 
-    // Memoize expensive Set creation (performance optimization)
-    const completedIds = useMemo(() =>
-        new Set(history.map(h => h.questionId)),
-        [history]
+    // Calculate estimated mark
+    const { total: estimatedMark, breakdown } = useMemo(() =>
+        calculateEstimatedMark(history, progressLog),
+        [history, progressLog]
     );
-
-    const totalQuestions = BALANCE.questions.totalCount; // 42
-    const progress = Math.round((completedIds.size / totalQuestions) * 100);
 
     const streaks = typeof userData.streaks === 'number' ? userData.streaks : 0;
     const name = userData.name || 'Student';
@@ -47,6 +94,16 @@ export default function DashboardView({ userData, history, onStart, onReview, on
             setIsEditingName(false);
         }
     };
+
+    // Determine grade based on mark
+    const getGrade = (mark) => {
+        if (mark >= 130) return { grade: 'Distinction', color: 'text-yellow-300' };
+        if (mark >= 120) return { grade: 'Merit', color: 'text-indigo-200' };
+        if (mark >= 100) return { grade: 'Pass', color: 'text-green-200' };
+        return { grade: 'Keep Practising', color: 'text-indigo-100' };
+    };
+
+    const { grade, color } = getGrade(estimatedMark);
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
@@ -83,9 +140,15 @@ export default function DashboardView({ userData, history, onStart, onReview, on
                         </div>
                     </div>
 
-                    <div className="flex items-center space-x-2 bg-indigo-50 px-3 py-1 rounded-full text-indigo-700">
-                        <Trophy size={16} />
-                        <span className="font-bold">{streaks} Day Streak</span>
+                    <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 bg-orange-50 px-3 py-1 rounded-full text-orange-700">
+                            <Calendar size={16} />
+                            <span className="font-bold">{getDaysUntilExam()} Days</span>
+                        </div>
+                        <div className="flex items-center space-x-2 bg-indigo-50 px-3 py-1 rounded-full text-indigo-700">
+                            <Trophy size={16} />
+                            <span className="font-bold">{streaks} Day Streak</span>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -97,19 +160,21 @@ export default function DashboardView({ userData, history, onStart, onReview, on
                 >
                     <div className="flex justify-between items-end mb-4">
                         <div>
-                            <p className="text-indigo-100 font-medium">Syllabus Coverage</p>
-                            <h2 className="text-4xl font-bold">{progress}%</h2>
+                            <h2 className="text-4xl font-bold">{estimatedMark} / 150</h2>
                         </div>
                         <TrendingUp className="text-indigo-200" size={32} />
                     </div>
                     <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
                         <div
-                            className="bg-white h-full rounded-full"
-                            style={{ width: `${progress}%` }}
+                            className="bg-white h-full rounded-full transition-all duration-500"
+                            style={{ width: `${(estimatedMark / 150) * 100}%` }}
                         ></div>
                     </div>
-                    <div className="mt-2 text-sm text-indigo-100 flex justify-between">
-                        <span>{completedIds.size} / {totalQuestions} items mastered</span>
+                    <div className="mt-3 flex justify-between items-center text-sm">
+                        <span className={`font-semibold ${color}`}>{grade}</span>
+                        <span className="text-indigo-100 text-xs">
+                            Pieces: {breakdown.pieces} • Technical: {breakdown.technical} • Sight: {breakdown.sightReading} • Aural: {breakdown.aural}
+                        </span>
                     </div>
                 </button>
 
@@ -121,19 +186,19 @@ export default function DashboardView({ userData, history, onStart, onReview, on
                         <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
                             <Play className="text-indigo-600 group-hover:text-white" fill="currentColor" />
                         </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Start Practicing</h3>
-                        <p className="text-sm text-gray-500">4 focused exercises</p>
+                        <h3 className="font-bold text-gray-800 text-lg">Scales and Arpeggios</h3>
+                        <p className="text-sm text-gray-500">4 exercises</p>
                     </button>
 
                     <button
-                        onClick={onReview}
-                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-green-500 hover:shadow-md transition-all group text-left"
+                        onClick={onLogProgress}
+                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-purple-500 hover:shadow-md transition-all group text-left"
                     >
-                        <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
-                            <BarChart2 className="text-green-600 group-hover:text-white" />
+                        <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
+                            <ClipboardList className="text-purple-600 group-hover:text-white" />
                         </div>
-                        <h3 className="font-bold text-gray-800 text-lg">Review History</h3>
-                        <p className="text-sm text-gray-500">Track your progress</p>
+                        <h3 className="font-bold text-gray-800 text-lg">Log My Progress</h3>
+                        <p className="text-sm text-gray-500">Pieces, Aural, Sight-Reading</p>
                     </button>
                 </div>
 

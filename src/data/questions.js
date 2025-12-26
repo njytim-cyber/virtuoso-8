@@ -30,14 +30,14 @@ export const QUESTIONS = [
     { id: 'II-10', cat: 'Arpeggios', title: 'E Minor Arpeggio (3 Oct)', time: '9/8', tempo: 50, beatUnit: 1.5, bow: 'both' },
 
     // III, IV, V. Misc (Dominant, Diminished, Chromatic)
-    { id: 'III-1', cat: 'Misc', title: 'Dom 7th in Db (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
-    { id: 'III-2', cat: 'Misc', title: 'Dom 7th in F (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
-    { id: 'III-3', cat: 'Misc', title: 'Dom 7th in Ab (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
-    { id: 'III-4', cat: 'Misc', title: 'Dom 7th in A (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
-    { id: 'IV-1', cat: 'Misc', title: 'Dim 7th on C (2 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
-    { id: 'IV-2', cat: 'Misc', title: 'Dim 7th on Eb (2 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
-    { id: 'IV-3', cat: 'Misc', title: 'Dim 7th on E (2 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
-    { id: 'IV-4', cat: 'Misc', title: 'Dim 7th on Ab (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
+    { id: 'III-1', cat: 'Misc', title: 'Dominant 7th in Db (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
+    { id: 'III-2', cat: 'Misc', title: 'Dominant 7th in F (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
+    { id: 'III-3', cat: 'Misc', title: 'Dominant 7th in Ab (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
+    { id: 'III-4', cat: 'Misc', title: 'Dominant 7th in A (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
+    { id: 'IV-1', cat: 'Misc', title: 'Diminished 7th on C (2 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
+    { id: 'IV-2', cat: 'Misc', title: 'Diminished 7th on Eb (2 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
+    { id: 'IV-3', cat: 'Misc', title: 'Diminished 7th on E (2 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
+    { id: 'IV-4', cat: 'Misc', title: 'Diminished 7th on Ab (3 Oct)', time: '4/4', tempo: 76, beatUnit: 1, bow: 'both' },
     { id: 'V-1', cat: 'Misc', title: 'Chromatic on C (2 Oct)', time: '6/8', tempo: 120, beatUnit: 0.5, bow: 'both' },
     { id: 'V-2', cat: 'Misc', title: 'Chromatic on Eb (2 Oct)', time: '6/8', tempo: 120, beatUnit: 0.5, bow: 'both' },
     { id: 'V-3', cat: 'Misc', title: 'Chromatic on E (2 Oct)', time: '6/8', tempo: 120, beatUnit: 0.5, bow: 'both' },
@@ -45,8 +45,8 @@ export const QUESTIONS = [
 
     // VI. Double Stops
     { id: 'VI-1', cat: 'DoubleStops', title: 'Double Stop 3rds in Bb Major (2 Oct)', time: '4/4', tempo: 120, beatUnit: 1, bow: 'broken_steps' },
-    { id: 'VI-5', cat: 'DoubleStops', title: 'Double Stop Octaves in D Major (1 Oct)', time: '4/4', tempo: 72, beatUnit: 1, bow: 'separate' },
-    { id: 'VI-6', cat: 'DoubleStops', title: 'Double Stop Octaves in G Minor Melodic (1 Oct)', time: '4/4', tempo: 72, beatUnit: 1, bow: 'separate' },
-    { id: 'VI-7', cat: 'DoubleStops', title: 'Double Stop Octaves in G Minor Harmonic (1 Oct)', time: '4/4', tempo: 72, beatUnit: 1, bow: 'separate' },
+    { id: 'VI-5', cat: 'DoubleStops', title: 'Double Stop Octaves in D Major (1 Octave)', time: '4/4', tempo: 72, beatUnit: 1, bow: 'separate' },
+    { id: 'VI-6', cat: 'DoubleStops', title: 'Double Stop Octaves in G Minor Melodic (1 Octave)', time: '4/4', tempo: 72, beatUnit: 1, bow: 'separate' },
+    { id: 'VI-7', cat: 'DoubleStops', title: 'Double Stop Octaves in G Minor Harmonic (1 Octave)', time: '4/4', tempo: 72, beatUnit: 1, bow: 'separate' },
     { id: 'VI-8', cat: 'DoubleStops', title: 'Double Stop 6ths in Eb Major (2 Oct)', time: '4/4', tempo: 72, beatUnit: 1, bow: 'separate' },
 ];
