@@ -1,4 +1,4 @@
-import { Star, Trophy, Target, TrendingUp, CheckCircle2, Music, Eye, Headphones, ArrowLeft } from 'lucide-react';
+import { Star, Trophy, Target, TrendingUp, CheckCircle2, Music, Eye, Headphones, ArrowLeft, Share } from 'lucide-react';
 import { QUESTIONS } from '@data/questions';
 
 // Progress log categories (same as ProgressLogView)
@@ -89,7 +89,7 @@ function calculateEstimatedMark(history, progressLog) {
  * @param {Object} props.progressLog - Progress log ratings
  * @param {Function} props.onBack - Return to dashboard callback
  */
-export default function ReviewView({ history, progressLog = {}, onBack }) {
+export default function ReviewView({ history, progressLog = {}, userData, onBack }) {
     const categories = ['Scales', 'Arpeggios', 'Dominants, Diminished and Chromatics', 'Double Stops'];
     const estimatedMark = calculateEstimatedMark(history, progressLog);
 
@@ -141,6 +141,34 @@ export default function ReviewView({ history, progressLog = {}, onBack }) {
         purple: { bg: 'bg-purple-600', border: 'border-purple-500', text: 'text-purple-400' },
     };
 
+    const handleShare = async () => {
+        const text = `🎻 Virtuoso 8 Progress for ${userData?.name || 'Student'}
+
+Estimated Mark: ${estimatedMark}/150
+Mastered: ${masteredQuestions} / ${totalQuestions} Questions
+
+Log My Progress:
+Pieces: ${getProgressStats(PROGRESS_CATEGORIES[0]).rated}/3
+Sight-Reading: ${getProgressStats(PROGRESS_CATEGORIES[1]).rated}/3
+Aural: ${getProgressStats(PROGRESS_CATEGORIES[2]).rated}/4
+
+Practice makes progress!`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Virtuoso 8 Progress',
+                    text: text,
+                });
+            } catch (err) {
+                // Ignore cancel
+            }
+        } else {
+            await navigator.clipboard.writeText(text);
+            alert('Progress summary copied to clipboard!');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-slate-900 text-white">
             {/* Header */}
@@ -150,8 +178,15 @@ export default function ReviewView({ history, progressLog = {}, onBack }) {
                         <button onClick={onBack} className="p-2 hover:bg-slate-700 rounded-full mr-3 transition-colors">
                             <ArrowLeft size={20} className="text-slate-400" />
                         </button>
-                        <h2 className="font-bold text-xl">Progress Review</h2>
+                        <h1 className="text-2xl font-bold">Progress Review</h1>
                     </div>
+                    <button
+                        onClick={handleShare}
+                        className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-semibold transition-colors shadow-lg shadow-indigo-500/20"
+                    >
+                        <Share size={18} />
+                        <span>Share</span>
+                    </button>
                 </div>
             </div>
 

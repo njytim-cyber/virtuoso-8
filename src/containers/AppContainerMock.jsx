@@ -125,7 +125,7 @@ export default function AppContainerMock() {
         case 'complete':
             return <CompleteView onBack={() => setView('dashboard')} />;
         case 'review':
-            return <ReviewView history={history} progressLog={progressLog} onBack={() => setView('dashboard')} />;
+            return <ReviewView history={history} progressLog={progressLog} userData={userData} onBack={() => setView('dashboard')} />;
         default:
             return <DashboardView userData={userData} history={history} progressLog={progressLog} onStart={handleStartSession} onReview={() => setView('review')} onLogProgress={() => setView('progressLog')} onUpdateName={handleUpdateName} />;
     }
